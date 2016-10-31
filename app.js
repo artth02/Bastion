@@ -31,9 +31,18 @@ else {
     (function loadModelViewControllers() {
         require('./libs/api/routes/healthCheck.js')(app);
 
-        app.get('/', function (req, res) {
+        app.get('/index', function (req, res) {
             res.sendFile(__dirname + '/libs/test/index.html');
         });
+
+        app.get('/cde', function (req, res) {
+            res.sendFile(__dirname + '/libs/test/index.cde.html');
+        });
+
+        app.get('/new', function () {
+
+        });
+
     })();
 
     (function loadAftermathMiddleware() {
@@ -43,23 +52,10 @@ else {
 
 
     var httpServer = http.createServer(app);
-    var io = require('socket.io')(httpServer);
 
     (function loadSocketIO() {
-        io.on('connection', function (socket) {
-
-            console.log('a user connected');
-
-            socket.on('chat message', function (msg) {
-                io.emit('chat message', msg);
-            });
-
-            socket.on('disconnect', function () {
-                console.log('user disconnected');
-            });
-
-        });
-    });
+        require('./libs/infra/socket.io/socket.io.config.js')(httpServer);
+    })();
 
     httpServer.listen(config.port, function () {
         console.log('Express server listening on port ' + config.port);
