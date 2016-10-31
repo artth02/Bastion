@@ -1,5 +1,5 @@
 module.exports = function (httpServer) {
-    var io = require('socket.io')(httpServer);
+    var io = require('socket.io')(10008);
 
     //Nomes dos canais
     var ios = ['cde', 'index'];
