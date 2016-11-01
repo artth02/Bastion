@@ -11,7 +11,10 @@ module.exports = function (httpServer) {
             console.log('a user connected at ' + element + ' channel');
 
             socket.on('chat message', function (msg) {
-                socket.broadcast.emit('chat message', msg);
+                if (element == 'cde')
+                    socket.broadcast.emit('chat message', msg);
+                else
+                    ios.emit('chat message', msg);
             });
 
             socket.on('disconnect', function () {
