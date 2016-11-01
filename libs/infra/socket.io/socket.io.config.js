@@ -11,7 +11,7 @@ module.exports = function (httpServer) {
             console.log('a user connected at ' + element + ' channel');
 
             socket.on('chat message', function (msg) {
-                channel.emit('chat message', msg);
+                socket.broadcast.emit('chat message', msg);
             });
 
             socket.on('disconnect', function () {

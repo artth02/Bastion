@@ -38,11 +38,6 @@ else {
         app.get('/cde', function (req, res) {
             res.sendFile(__dirname + '/libs/test/index.cde.html');
         });
-
-        app.get('/new', function () {
-
-        });
-
     })();
 
     (function loadAftermathMiddleware() {
