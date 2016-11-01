@@ -62,13 +62,15 @@
 	<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 	<script>
         var socket = io('http://10.31.0.243:10008/cde');
-        $('form').submit(function(){
-            socket.emit('chat message', $('#m').val());
+         $('form').submit(function(){
+			socket.emit('chat message',  {
+				msg: $('#m').val()
+			});
             $('#m').val('');
             return false;
         });
-        socket.on('chat message', function(msg){
-            $('#messages').append($('<li>').text(msg));
+        socket.on('chat message', function(obj){
+            $('#messages').append($('<li>').text(obj.msg));
         });
     </script>
 </body>
