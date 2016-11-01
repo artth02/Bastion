@@ -14,7 +14,7 @@ module.exports = function (httpServer) {
                 if (element == 'cde')
                     socket.broadcast.emit('chat message', msg);
                 else
-                    ios.emit('chat message', msg);
+                    channel.emit('chat message', msg);
             });
 
             socket.on('disconnect', function () {
