@@ -62,6 +62,7 @@
 	<script src="http://10.31.0.243:10008/socket.io/socket.io.js"></script>
 	<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 	<script>
+		Notification.requestPermission();
         // var socket = io.connect('http://localhost:10008');
 		var socket = io.connect('http://10.31.0.243:10008');
 		socket.on('connect', function() {
@@ -79,6 +80,13 @@
         });
         socket.on('notification', function(value){
             $('#messages').append($('<li>').text(value));
+			if (Notification.permission === "granted"){
+				var opcoes = {
+					body: value,
+					icon: 'https://pbs.twimg.com/profile_images/457381844132954114/9n2h4Ple_400x400.png'
+				}
+				var n = new Notification('Nova Notificação - CDE',opcoes);
+			}
         });
     </script>
 </body>
