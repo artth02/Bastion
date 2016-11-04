@@ -65,12 +65,12 @@
         var socket = io.connect('http://localhost:10008');
 		socket.on('connect', function() {
 			// Connected, let's sign-up for to receive messages for this room
-			socket.emit('rooms', ['cde']);
+			socket.emit('rooms', ['cobner']);
 		});
-		// var socket = io('http://10.31.0.243:10008/cde');
+		// var socket = io('http://10.31.0.243:10008/cobner');
          $('form').submit(function(){
 			 var sender = {
-                channels: ['cde'],
+                channels: ['cobner'],
                 value: $('#m').val()
             };
 			socket.emit('notification',sender);

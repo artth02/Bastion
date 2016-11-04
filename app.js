@@ -16,6 +16,13 @@ if (cluster.isMaster && cpuCount > 0) {
     });
 }
 else {
+    (function loadEventEmitter() {
+        const EventEmitter = require('events');
+        class EventClass extends EventEmitter { };
+        const eventClass = new EventClass();
+        global.eventClass = eventClass;
+    })();
+
     (function loadJsonBodyParser() {
         var bodyParser = require('body-parser');
         app.use(bodyParser());
@@ -30,6 +37,7 @@ else {
 
     (function loadModelViewControllers() {
         require('./libs/api/routes/healthCheck.js')(app);
+        require('./libs/api/routes/emit.js')(app);
 
         app.get('/index', function (req, res) {
             res.sendFile(__dirname + '/libs/test/index.html');
@@ -38,6 +46,10 @@ else {
         app.get('/cde', function (req, res) {
             res.sendFile(__dirname + '/libs/test/index.cde.html');
         });
+
+        app.get('/cobner', function (req, res) {
+            res.sendFile(__dirname + '/libs/test/index.cobner.html');
+        });
     })();
 
     (function loadAftermathMiddleware() {
@@ -45,14 +57,15 @@ else {
         app.use(require('./libs/api/middlewares/error.js'));
     })();
 
+    (function loadSocketIO() {
+        global.socketIO = require('socket.io')(config.io.port);
+        require('./libs/core/emit/emitService.js').Init();
+        console.log('Port: ' + config.io.port + ' - Socket.IO');
+    })();
 
     var httpServer = http.createServer(app);
 
-    (function loadSocketIO() {
-        require('./libs/infra/socket.io/socket.io.config.js')(httpServer);
-    })();
-
     httpServer.listen(config.port, function () {
-        console.log('Express server listening on port ' + config.port);
+        console.log('Port: ' + config.port + ' - Express server');
     });
 }

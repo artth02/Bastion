@@ -13,5 +13,8 @@ module.exports = {
     port: appPort,
     clusters: process.env.CLUSTERS || 1,
     aion: aion,
-    relational
+    relational: relational,
+    io: {
+        port: 10008
+    }
 };
