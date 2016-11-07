@@ -5,6 +5,6 @@ module.exports = {
 };
 
 function sendNotification(req, res, next) {
-    emitService.emit(req.body);
+    emitService.notification.emit(req.body);
     res.status(200).end();
 }
