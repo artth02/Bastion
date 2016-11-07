@@ -3,13 +3,15 @@ class EventClass extends EventEmitter { };
 const eventClass = new EventClass();
 const eventNames = {
     socketIO: {
-        create: 'socket-create-channel',
-        emit: 'socket-emit'
+        emit: 'emit-notification',
+        broadcast: 'broadcast-notification'
     }
 }
 module.exports = {
     Init: Init,
-    emit: emit
+    notification: {
+        emit: emit
+    }
 }
 
 //Inicializa IO criando os canais
@@ -24,9 +26,12 @@ function Init() {
             });
         });
 
-        socket.on('notification', function (sender) {
-            
-            eventClass.emit(eventNames.socketIO.emit, sender);
+        socket.on(eventNames.socketIO.emit, function (sender) {
+            emitNotification(sender);
+        });
+
+        socket.on(eventNames.socketIO.broadcast, function (sender) {
+            socket.broadcast.emit(eventNames.socketIO.broadcast, sender.value);
         });
 
         socket.on('disconnect', function (param1, param2, param3) {
@@ -39,13 +44,12 @@ function Init() {
  * Emite algo para os canais do socket socketIO.
  */
 function emit(sender) {
-    eventClass.emit(eventNames.socketIO.emit, sender);
+    emitNotification(sender);
 }
 
 //Node Emmiter
-eventClass.on(eventNames.socketIO.emit, function (sender) {
+function emitNotification(sender) {
     sender.channels.forEach(function (item) {
-        socketIO.sockets.in(item).emit('notification', sender.value);
-        console.log('Node Emitter - ' + item);
+        socketIO.sockets.in(item).emit(eventNames.socketIO.emit, sender.value);
     });
-});
+};
