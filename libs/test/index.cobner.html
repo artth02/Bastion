@@ -74,12 +74,12 @@
                 channels: ['cobner'],
                 value: $('#m').val()
             };
-			socket.emit('notification',sender);
+			socket.emit('broadcast-notification',sender);
             $('#m').val('');
             return false;
         });
         
-        socket.on('notification', function(value){
+        socket.on('bastion-notification', function(value){
             $('#messages').append($('<li>').text(value));
 
             if (Notification.permission === "granted"){

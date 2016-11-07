@@ -4,7 +4,8 @@ const eventClass = new EventClass();
 const eventNames = {
     socketIO: {
         emit: 'emit-notification',
-        broadcast: 'broadcast-notification'
+        broadcast: 'broadcast-notification',
+        notification: 'bastion-notification'
     }
 }
 module.exports = {
@@ -31,7 +32,7 @@ function Init() {
         });
 
         socket.on(eventNames.socketIO.broadcast, function (sender) {
-            socket.broadcast.emit(eventNames.socketIO.broadcast, sender.value);
+            socket.broadcast.emit(eventNames.socketIO.notification, sender.value);
         });
 
         socket.on('disconnect', function (param1, param2, param3) {
@@ -50,6 +51,6 @@ function emit(sender) {
 //Node Emmiter
 function emitNotification(sender) {
     sender.channels.forEach(function (item) {
-        socketIO.sockets.in(item).emit(eventNames.socketIO.emit, sender.value);
+        socketIO.sockets.in(item).emit(eventNames.socketIO.notification, sender.value);
     });
 };

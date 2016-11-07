@@ -75,10 +75,11 @@
                 value: $('#m').val()
             };
 			socket.emit('broadcast-notification',sender);
+			$('#messages').append($('<li>').text($('#m').val()));
             $('#m').val('');
             return false;
         });
-        socket.on('broadcast-notification', function(value){
+        socket.on('bastion-notification', function(value){
             $('#messages').append($('<li>').text(value));
 			if (Notification.permission === "granted"){
 				var opcoes = {
