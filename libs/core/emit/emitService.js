@@ -28,14 +28,23 @@ function Init() {
         });
 
         socket.on(eventNames.socketIO.emit, function (sender) {
-            emitNotification(sender);
+            for (var prop in socket.rooms) {
+                if (typeof socket.rooms[prop] != socket.id) {
+                    socket.in(prop).emit(eventNames.socketIO.notification, sender.value);
+                }
+            }
         });
 
         socket.on(eventNames.socketIO.broadcast, function (sender) {
-            socket.broadcast.emit(eventNames.socketIO.notification, sender.value);
+            // socket.broadcast.in(socket.room).emit(eventNames.socketIO.notification, sender.value);
+            for (var prop in socket.rooms) {
+                if (typeof socket.rooms[prop] != socket.id) {
+                    socket.broadcast.in(prop).emit(eventNames.socketIO.notification, sender.value);
+                }
+            }
         });
 
-        socket.on('disconnect', function (param1, param2, param3) {
+        socket.on('disconnect', function () {
             console.log('user disconnected from channel');
         });
     });
