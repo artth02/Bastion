@@ -22,10 +22,16 @@ function Init() {
         console.log('a connection');
         socket.on('rooms', function (rooms) {
             console.log(rooms);
-            rooms.forEach(function (room) {
-                console.log('a join on ' + room);
-                socket.join(room);
-            });
+            if (typeof (rooms) == String) {
+                console.log('a join on ' + rooms);
+                socket.join(rooms);
+            } else {
+                rooms.forEach(function (room) {
+                    console.log('a join on ' + room);
+                    socket.join(room);
+                });
+            }
+
         });
 
         socket.on(eventNames.socketIO.emit, function (sender) {
