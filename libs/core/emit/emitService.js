@@ -23,7 +23,7 @@ function Init() {
         socket.on('rooms', function (rooms) {
             console.log(rooms);
             console.log(typeof (rooms));
-            if (typeof (rooms) == String) {
+            if (typeof (rooms) == string) {
                 console.log('a join on ' + rooms);
                 socket.join(rooms);
             } else {
