@@ -22,6 +22,7 @@ function Init() {
         console.log('a connection');
         socket.on('rooms', function (rooms) {
             console.log(rooms);
+            console.log(typeof (rooms));
             if (typeof (rooms) == String) {
                 console.log('a join on ' + rooms);
                 socket.join(rooms);
