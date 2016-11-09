@@ -21,6 +21,7 @@ function Init() {
         // once a client has connected, we expect to get a ping from them saying what room they want to join
         console.log('a connection');
         socket.on('rooms', function (rooms) {
+            console.log(rooms);
             rooms.forEach(function (room) {
                 console.log('a join on ' + room);
                 socket.join(room);
