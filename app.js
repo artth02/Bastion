@@ -37,7 +37,7 @@ else {
 
     (function loadModelViewControllers() {
         require('./libs/api/routes/healthCheck.js')(app);
-        require('./libs/api/routes/emit.js')(app);
+        require('./libs/api/routes/notification.js')(app);
 
         app.get('/index', function (req, res) {
             res.sendFile(__dirname + '/libs/test/index.html');
@@ -59,7 +59,7 @@ else {
 
     (function loadSocketIO() {
         global.socketIO = require('socket.io')(config.io.port);
-        require('./libs/core/emit/emitService.js').Init();
+        require('./libs/core/notification/notificationService.js').Init();
         console.log('Port: ' + config.io.port + ' - Socket.IO');
     })();
 

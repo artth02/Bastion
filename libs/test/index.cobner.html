@@ -54,41 +54,61 @@
 </head>
 
 <body>
+	<label id="id"></label>
 	<ul id="messages"></ul>
 	<form action="">
 		<input id="m" autocomplete="off" /><button>Send</button>
 	</form>
-	<!--<script src="http://localhost:10008/socket.io/socket.io.js"></script>-->
-	<script src="http://10.31.0.243:10008/socket.io/socket.io.js"></script>
+	<script src="http://localhost:10008/socket.io/socket.io.js"></script>
+	<!--<script src="http://10.31.0.243:10008/socket.io/socket.io.js"></script>-->
 	<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 	<script>
-        Notification.requestPermission();
-        // var socket = io.connect('http://localhost:10008');
-        var socket = io.connect('http://10.31.0.243:10008');
+		Notification.requestPermission();
+		window.socket = io.connect('http://localhost:10008/bastion/notification');
+		// window.socket = io.connect('http://10.31.0.243:10008');
+
+
 		socket.on('connect', function() {
-			// Connected, let's sign-up for to receive messages for this room
-			socket.emit('rooms', ['cobner']);
+				$('#messages').append($('<li>').text('Conectado'));
+				// Connected, let's sign-up for to receive messages for this room
+				conectar();
 		});
+
+        function conectar(){
+			var id = Math.floor(Math.random() * (10000- 1)) + 1;
+
+			$('#id').text("Id: " + id);
+			socket.emit('bastion-join', {
+					user: id
+			},'cobner');
+
+			$('#messages').append($('<li>').text('Você entrou'));
+			
+		}
          $('form').submit(function(){
-			 var sender = {
-                channels: ['cobner'],
-                value: $('#m').val()
+			 var message = {
+				meta:{
+					to: 'user'
+				},
+                notification: {
+					title:socket.user,
+					body: $('#m').val()
+				}
             };
-			socket.emit('broadcast-notification',sender);
+			socket.emit('bastion-broadcast-notification',message, 'cobner');
 			$('#messages').append($('<li>').text($('#m').val()));
             $('#m').val('');
             return false;
         });
-        
         socket.on('bastion-notification', function(value){
-            $('#messages').append($('<li>').text(value));
-
-            if (Notification.permission === "granted"){
+			console.log(socket);
+            $('#messages').append($('<li>').text(value.title + ': ' + value.body));
+			if (Notification.permission === "granted"){
 				var opcoes = {
-					body: value,
+					body: value.body,
 					icon: 'http://www.mmo-town.com/wp-content/uploads/2016/03/bastion-profile-icon.png'
 				}
-				var n = new Notification('Nova Notificação - Cobner',opcoes);
+				var n = new Notification(value.title,opcoes);
 			}
         });
     </script>
