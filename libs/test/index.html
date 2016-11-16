@@ -79,7 +79,7 @@
 
 			$('#id').text("Id: " + id);
 			socket.emit('bastion-join', {
-					user: id
+					customId: id
 			},'index');
 
 			$('#messages').append($('<li>').text('Você entrou'));
@@ -88,10 +88,10 @@
          $('form').submit(function(){
 			 var message = {
 				meta:{
-					to: 'user'
+					to: 'customId'
 				},
                 notification: {
-					title:socket.user,
+					title:socket.customId,
 					body: $('#m').val()
 				}
             };

@@ -38,6 +38,7 @@ else {
     (function loadModelViewControllers() {
         require('./libs/api/routes/healthCheck.js')(app);
         require('./libs/api/routes/notification.js')(app);
+        require('./libs/api/routes/inspect.js')(app);
 
         app.get('/index', function (req, res) {
             res.sendFile(__dirname + '/libs/test/index.html');
