@@ -75,7 +75,7 @@
 		});
 
         function conectar(){
-			var id = Math.floor(Math.random() * (10000- 1)) + 1;
+			window.id = Math.floor(Math.random() * (10000- 1)) + 1;
 
 			$('#id').text("Id: " + id);
 			socket.emit('bastion-join', {
@@ -91,7 +91,7 @@
 					to: 'customId'
 				},
                 notification: {
-					title:socket.customId,
+					title:id,
 					body: $('#m').val()
 				}
             };
