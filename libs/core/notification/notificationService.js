@@ -66,7 +66,7 @@ function Init() {
 }
 
 /**
- * Emite algo para os canais do socket socketIO.
+ * Emite sinal para os canais do socket socketIO.
  * (Função chamada apenas via POST na API)
  */
 function emit(sender) {
