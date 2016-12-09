@@ -60,12 +60,12 @@
 		<input id="m" autocomplete="off" /><button>Send</button>
 	</form>
 	<!--<script src="http://localhost:10008/socket.io/socket.io.js"></script>-->
-	<script src="http://10.31.0.243:10008/socket.io/socket.io.js"></script>
+	<script src="http://10.31.0.244:10008/socket.io/socket.io.js"></script>
 	<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 	<script>
 		Notification.requestPermission();
 		// window.socket = io.connect('http://localhost:10008/bastion/notification');
-		window.socket = io.connect('http://10.31.0.243:10008/bastion/notification');
+		window.socket = io.connect('http://10.31.0.244:10008/bastion/notification');
 
 
 		socket.on('connect', function() {

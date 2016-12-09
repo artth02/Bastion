@@ -40,15 +40,15 @@ else {
         require('./libs/api/routes/notification.js')(app);
         require('./libs/api/routes/inspect.js')(app);
 
-        app.get('/index', function (req, res) {
+        app.get('/bastion/chat/index', function (req, res) {
             res.sendFile(__dirname + '/libs/test/index.html');
         });
 
-        app.get('/cde', function (req, res) {
+        app.get('/bastion/chat/cde', function (req, res) {
             res.sendFile(__dirname + '/libs/test/index.cde.html');
         });
 
-        app.get('/cobner', function (req, res) {
+        app.get('/bastion/chat/cobner', function (req, res) {
             res.sendFile(__dirname + '/libs/test/index.cobner.html');
         });
     })();
