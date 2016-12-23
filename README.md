@@ -5,7 +5,7 @@ Realtime notification using Socket I/O
 
 ## When in web application/cordova apps
 ### Connection
-For connection to bastion API, you need firstly refer a socket-io.js file, like this:
+For connection to bastion API, you first need to refer a socket-io.js file, like this:
 ``` javascript
     <script src="http://localhost:10008/socket.io/socket.io.js"></script>
 ```
@@ -17,7 +17,7 @@ Then in a javascript file, establish a connection to socket.io port, like this:
     window.socket = io.connect('http://localhost:10008/bastion/notification');
 ```
 
-After you connected at bastion, you'll recive a event called 'connect', it mean you have a successfull connection. [See more socket io events in this topic](http://stackoverflow.com/questions/24224287/list-of-socket-io-events) <br />
+After you connected at bastion, you'll recive a event called 'connect', it means you have connected successfully. [See more socket io events in this topic](http://stackoverflow.com/questions/24224287/list-of-socket-io-events) <br />
 You can implement an event listener as it:
 
 ``` javascript
@@ -47,12 +47,12 @@ After this you are in a channel, let's message!
 #
 ### Messaging
 
-Only what you have to care about is, tell bastion what and who will recive your information. <br />
+The only thing you have to care about, is to tell bastion what and who will receive your information. <br />
 
 Bastion message is an object, and have two attributes:<br/>
 
-**meta**: This attribute tell bastion some procedures about the reciving channel, like in example.<br/>
-**notification**: Its what you want to send, bastion do not care about what you will send to him, he only transport that to other sockets.
+**meta**: This attribute tell bastion some procedures about the receiving channel, like in the example.<br/>
+**notification**: Its what you want to send, bastion do not care about what you will send to him, he only transports that to other sockets.
 
 ``` javascript
     {
