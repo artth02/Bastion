@@ -79,3 +79,54 @@ When we need to send a information to other sockets, bastion provide us two ways
 
 ```
 #
+## Wtih HTTP-POST Request
+Bastion also provide us a http post method, that send your message to any of his channels.<br/>
+See this example above:<br/>
+
+**URL**: http://localhost:10007/bastion/api/notification<br/>
+**METHOD**: POST<br/>
+
+**Notes**: <br/>
+"http://localhost:10007/" this is not bastion socket io port, this is bastion API port(a node server, like a normal api). <br/>
+"bastion/api/notification" this is the route for your messages. <br/>
+
+
+The object that Bastion expected us to send to him at the request body is(**THE SAME STRUCTURE THAT SOCKET VERSION**):
+
+``` json
+    {
+        "meta": {
+            "channels": ["index","channel1"] //Array of channels that will receive your message.
+        },
+        "notification": {} // let this attribute value to your imagination too.
+    }
+```
+
+### Bastion Responses
+
+### Success: <br/>
+**Status Code** : 200 - OK
+
+**Request Body**:
+``` json
+    {}
+```
+
+### Errors:
+Bastion have a default response when somthing gets wrong, as this example:
+
+**Request Body**:
+``` json
+
+    {
+        "developerMessage": "A operação solicitada não foi encontrada",
+        "userMessageTranslated": "Não foi possivel concluir a operação solicitada",
+        "errorCode": 404,
+        "moreInfo": {
+            "developerMessage": "Recurso não encontrado",
+            "message": "A operação solicitada não foi encontrada",
+            "status": 404
+        }
+    }
+```
+#
