@@ -93,7 +93,7 @@ See this example above:<br/>
 
 The object that Bastion expected us to send to him at the request body is(**THE SAME STRUCTURE THAT SOCKET VERSION**):
 
-``` json
+``` javascript
     {
         "meta": {
             "channels": ["index","channel1"] //Array of channels that will receive your message.
@@ -108,7 +108,7 @@ The object that Bastion expected us to send to him at the request body is(**THE 
 **Status Code** : 200 - OK
 
 **Request Body**:
-``` json
+``` javascript
     {}
 ```
 
@@ -116,7 +116,7 @@ The object that Bastion expected us to send to him at the request body is(**THE 
 Bastion have a default response when somthing gets wrong, as this example:
 
 **Request Body**:
-``` json
+``` javascript
 
     {
         "developerMessage": "A operação solicitada não foi encontrada",
