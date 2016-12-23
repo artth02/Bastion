@@ -79,7 +79,7 @@ When we need to send a information to other sockets, bastion provide us two ways
 
 ```
 #
-## Wtih HTTP-POST Request
+## With HTTP-POST Request
 Bastion also provide us a http post method, that send your message to any of his channels.<br/>
 See this example above:<br/>
 
@@ -91,7 +91,7 @@ See this example above:<br/>
 "bastion/api/notification" this is the route for your messages. <br/>
 
 
-The object that Bastion expected us to send to him at the request body is(**THE SAME STRUCTURE THAT SOCKET VERSION**):
+The object that Bastion expected us to send to him at the request body is(**THE SAME STRUCTURE THAT "MESSAEGING" SECTION**):
 
 ``` json
     {
