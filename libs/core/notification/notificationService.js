@@ -1,5 +1,5 @@
 const EventEmitter = require('events');
-class EventClass extends EventEmitter { };
+class EventClass extends EventEmitter {};
 const eventClass = new EventClass();
 const eventNames = {
     socketIO: {
@@ -25,40 +25,40 @@ module.exports = {
 function Init() {
     global.connectedClients = {};
     var notificationNamespace = socketIO.of(namespaces.notification);
-    notificationNamespace.on('connection', function (socket) {
+    notificationNamespace.on('connection', function(socket) {
         console.log('Connected as: ' + socket.id);
 
-        socket.on(eventNames.socketIO.join, function (connectionOptions, ...channels) {
+        socket.on(eventNames.socketIO.join, function(connectionOptions, ...channels) {
             //Mapeando ID usuário conectado com id do socket;
             socket.customId = connectionOptions.customId;
             connectedClients[socket.customId] = socket.id;
 
             //Conectando nos canais do parametro
             console.log('Joined as: ' + socket.customId);
-            channels.forEach(function (channelName) {
+            channels.forEach(function(channelName) {
                 console.log(socket.customId + ' joined on ' + channelName);
                 socket.join(channelName);
             });
         });
 
         //Evento disparado quando recebido EMIT de algum dos sockets
-        socket.on(eventNames.socketIO.emit, function (message, ...channels) {
-            channels.forEach(function (channelName) {
+        socket.on(eventNames.socketIO.emit, function(message, ...channels) {
+            channels.forEach(function(channelName) {
                 socket.in(channelName).emit(eventNames.socketIO.notification, message.notification);
             });
         });
 
         //Evento disparado quando recebido broadcast de algum dos sockets
-        socket.on(eventNames.socketIO.broadcast, function (message, ...channels) {
+        socket.on(eventNames.socketIO.broadcast, function(message, ...channels) {
             // for (var prop in socket.rooms) {
             // if (typeof socket.rooms[prop] != socket.customId) {
-            channels.forEach(function (channelName) {
+            channels.forEach(function(channelName) {
                 socket.broadcast.in(channelName).emit(eventNames.socketIO.notification, message.notification);
             });
         });
 
         //Disparado sempre que houver uma desconexão
-        socket.on('disconnect', function () {
+        socket.on('disconnect', function() {
             delete connectedClients[socket.customId];
             console.log('Disconnected: ' + socket.customId);
         });
@@ -70,7 +70,7 @@ function Init() {
  * (Função chamada apenas via POST na API)
  */
 function emit(sender) {
-    sender.meta.channels.forEach(function (item) {
+    sender.meta.channels.forEach(function(item) {
         socketIO.of(namespaces.notification).in(item).emit(eventNames.socketIO.notification, sender.notification);
     });
 }

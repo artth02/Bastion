@@ -1,17 +1,24 @@
 module.exports = function(err, req, res, next) {
     let error = {};
 
-    if(err.assertion){
+    if (err.isJoi) {
+        err.isJoi = false;
+        error = {
+            developerMessage: "Schema validation error: " + err.message,
+            userMessageTranslated: 'Os dados enviados não são validos',
+            errorCode: 400,
+            moreInfo: err.details
+        };
+    } else if (err.assertion) {
         err.assertion = undefined
-        
+
         error = {
             developerMessage: "Should throws an Exception: " + err.operator,
             userMessageTranslated: 'Os dados enviados não são validos',
             errorCode: 400,
             moreInfo: err
         };
-    }
-    else
+    } else
         error = {
             developerMessage: err.message || 'não foi gerada mensagem de erro (verifique a propriedade "moreInfo")',
             userMessageTranslated: err.userMessageTranslated || 'Não foi possivel concluir a operação solicitada',
@@ -19,7 +26,7 @@ module.exports = function(err, req, res, next) {
             moreInfo: err
         };
 
-    if(!res.finished)
+    if (!res.finished)
         res.status(error.errorCode).json(error);
 
     res.end();
