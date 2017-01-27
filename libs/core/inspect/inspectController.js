@@ -5,14 +5,14 @@ module.exports = {
     inspectChannel: inspectChannel
 };
 
-function inspect(req, res, next) {
-    notificationService.inspect(function (data) {
-        res.status(200).json(data);
+function inspect(request, reply) {
+    notificationService.inspect(function(data) {
+        reply(data).code(200);
     });
 }
 
-function inspectChannel(req, res, next) {
-    notificationService.inspectChannel(req.params.channelName, function (data) {
-        res.status(200).json(data);
+function inspectChannel(request, reply) {
+    notificationService.inspectChannel(request.params.channelName, function(data) {
+        reply(data).code(200);
     });
 }

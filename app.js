@@ -1,72 +1,44 @@
-var express = require('express'),
-    app = express(),
-    http = require('http'),
+const Hapi = require('hapi'),
+    server = new Hapi.Server(),
     cluster = require('cluster'),
-    config = require('./config/environment.js'),
-    cpuCount = config.clusters;
+    env = require('./config/environment.js'),
+    chalk = require('chalk');
 
-if (cluster.isMaster && cpuCount > 0) {
-    for (var i = 0; i < cpuCount; i += 1) {
+if (cluster.isMaster && env.api.cluster) {
+    for (var i = 0; i < env.api.cluster; i += 1) {
         cluster.fork();
     }
 
-    cluster.on('exit', function (worker) {
-        console.log('Worker %d died :(', worker.id);
+    cluster.on('exit', function(worker) {
+        console.error('worker %d died', worker.id);
         cluster.fork();
     });
-}
-else {
-    (function loadEventEmitter() {
-        const EventEmitter = require('events');
-        class EventClass extends EventEmitter { };
-        const eventClass = new EventClass();
-        global.eventClass = eventClass;
-    })();
+} else {
+    server.connection({ port: env.api.port });
 
-    (function loadJsonBodyParser() {
-        var bodyParser = require('body-parser');
-        app.use(bodyParser());
-        app.use(bodyParser.json());
-        app.use(bodyParser.urlencoded());
-    })();
+    require('./libs/api/middlewares/preResponse.js')(server);
+    require('./libs/api/routes/routes.js')(server);
 
-    (function loadSecurityMiddleware() {
-        app.use(require('./libs/api/middlewares/cors.js'));
-        // app.use(require('./libs/api/middleware/token.js'));
-    })();
+    server.register([
+        require('inert'),
+        require('vision'),
+        require('hapi-swagger')
+    ], (err) => {
+        if (err)
+            throw err;
 
-    (function loadModelViewControllers() {
-        require('./libs/api/routes/healthCheck.js')(app);
-        require('./libs/api/routes/notification.js')(app);
-        require('./libs/api/routes/inspect.js')(app);
-
-        app.get('/bastion/chat/index', function (req, res) {
-            res.sendFile(__dirname + '/libs/test/index.html');
+        server.start((err) => {
+            if (err) {
+                console.error(chalk.red('error'), 'Server fault: ' + err);
+            } else {
+                console.info(chalk.green('bastion is running'), server.info.protocol + ' server at: ' + chalk.bold(server.info.uri));
+            }
         });
-
-        app.get('/bastion/chat/cde', function (req, res) {
-            res.sendFile(__dirname + '/libs/test/index.cde.html');
-        });
-
-        app.get('/bastion/chat/cobner', function (req, res) {
-            res.sendFile(__dirname + '/libs/test/index.cobner.html');
-        });
-    })();
-
-    (function loadAftermathMiddleware() {
-        app.use(require('./libs/api/middlewares/notFound.js'));
-        app.use(require('./libs/api/middlewares/error.js'));
-    })();
+    });
 
     (function loadSocketIO() {
-        global.socketIO = require('socket.io')(config.io.port);
+        global.socketIO = require('socket.io')(env.socketIO.port);
         require('./libs/core/notification/notificationService.js').Init();
-        console.log('Port: ' + config.io.port + ' - Socket.IO');
+        console.info(chalk.green('bastion is running'), 'socket-IO server at: ' + chalk.bold(server.info.protocol + '://' + server.info.host + ':' + env.socketIO.port));
     })();
-
-    var httpServer = http.createServer(app);
-
-    httpServer.listen(config.port, function () {
-        console.log('Port: ' + config.port + ' - Express server');
-    });
 }

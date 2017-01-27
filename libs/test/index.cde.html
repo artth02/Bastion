@@ -2,114 +2,114 @@
 <html>
 
 <head>
-	<title>Socket.IO chat</title>
-	<style>
-		* {
-			margin: 0;
-			padding: 0;
-			box-sizing: border-box;
-		}
-		
-		body {
-			font: 13px Helvetica, Arial;
-		}
-		
-		form {
-			background: #000;
-			padding: 3px;
-			position: fixed;
-			bottom: 0;
-			width: 100%;
-		}
-		
-		form input {
-			border: 0;
-			padding: 10px;
-			width: 90%;
-			margin-right: .5%;
-		}
-		
-		form button {
-			width: 9%;
-			background: rgb(130, 224, 255);
-			border: none;
-			padding: 10px;
-		}
-		
-		#messages {
-			list-style-type: none;
-			margin: 0;
-			padding: 0;
-		}
-		
-		#messages li {
-			padding: 5px 10px;
-		}
-		
-		#messages li:nth-child(odd) {
-			background: #eee;
-		}
-	</style>
+    <title>Socket.IO chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font: 13px Helvetica, Arial;
+        }
+        
+        form {
+            background: #000;
+            padding: 3px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        
+        form input {
+            border: 0;
+            padding: 10px;
+            width: 90%;
+            margin-right: .5%;
+        }
+        
+        form button {
+            width: 9%;
+            background: rgb(130, 224, 255);
+            border: none;
+            padding: 10px;
+        }
+        
+        #messages {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        #messages li {
+            padding: 5px 10px;
+        }
+        
+        #messages li:nth-child(odd) {
+            background: #eee;
+        }
+    </style>
 
 </head>
 
 <body>
-	<label id="id"></label>
-	<ul id="messages"></ul>
-	<form action="">
-		<input id="m" autocomplete="off" /><button>Send</button>
-	</form>
-	<!--<script src="http://localhost:10008/socket.io/socket.io.js"></script>-->
-	<script src="http://10.31.0.244:10008/socket.io/socket.io.js"></script>
-	<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
-	<script>
-		Notification.requestPermission();
-		// window.socket = io.connect('http://localhost:10008/bastion/notification');
-		window.socket = io.connect('http://10.31.0.244:10008/bastion/notification');
+    <label id="id"></label>
+    <ul id="messages"></ul>
+    <form action="">
+        <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+    <script src="http://localhost:10008/socket.io/socket.io.js"></script>
+    <!--<script src="http://10.31.0.244:10008/socket.io/socket.io.js"></script>-->
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+        Notification.requestPermission();
+        window.socket = io.connect('http://localhost:10008/bastion/notification');
+        // window.socket = io.connect('http://10.31.0.244:10008/bastion/notification');
 
 
-		socket.on('connect', function() {
-				$('#messages').append($('<li>').text('Conectado'));
-				// Connected, let's sign-up for to receive messages for this room
-				conectar();
-		});
+        socket.on('connect', function() {
+            $('#messages').append($('<li>').text('Conectado'));
+            // Connected, let's sign-up for to receive messages for this room
+            conectar();
+        });
 
-        function conectar(){
-			window.id = Math.floor(Math.random() * (10000- 1)) + 1;
+        function conectar() {
+            window.id = Math.floor(Math.random() * (10000 - 1)) + 1;
 
-			$('#id').text("Id: " + id);
-			socket.emit('bastion-join', {
-					customId: id
-			},'cde');
+            $('#id').text("Id: " + id);
+            socket.emit('bastion-join', {
+                customId: id
+            }, 'cde');
 
-			$('#messages').append($('<li>').text('Você entrou'));
-			
-		}
-         $('form').submit(function(){
-			 var message = {
-				meta:{
-					to: 'customId'
-				},
+            $('#messages').append($('<li>').text('Você entrou'));
+
+        }
+        $('form').submit(function() {
+            var message = {
+                meta: {
+                    to: 'customId'
+                },
                 notification: {
-					title:id,
-					body: $('#m').val()
-				}
+                    title: id,
+                    body: $('#m').val()
+                }
             };
-			socket.emit('bastion-broadcast-notification',message, 'cde');
-			$('#messages').append($('<li>').text($('#m').val()));
+            socket.emit('bastion-broadcast-notification', message, 'cde');
+            $('#messages').append($('<li>').text($('#m').val()));
             $('#m').val('');
             return false;
         });
-        socket.on('bastion-notification', function(value){
-			console.log(socket);
+        socket.on('bastion-notification', function(value) {
+            console.log(socket);
             $('#messages').append($('<li>').text(value.title + ': ' + value.body));
-			if (Notification.permission === "granted"){
-				var opcoes = {
-					body: value.body,
-					icon: 'http://www.mmo-town.com/wp-content/uploads/2016/03/bastion-profile-icon.png'
-				}
-				var n = new Notification(value.title,opcoes);
-			}
+            if (Notification.permission === "granted") {
+                var opcoes = {
+                    body: value.body,
+                    icon: 'http://www.mmo-town.com/wp-content/uploads/2016/03/bastion-profile-icon.png'
+                }
+                var n = new Notification(value.title, opcoes);
+            }
         });
     </script>
 </body>

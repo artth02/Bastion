@@ -5,14 +5,7 @@ module.exports = {
     sendNotification: sendNotification
 };
 
-function sendNotification(req, res, next) {
-    notificationSchemas.apiSchemas.sendNotification.validate(req.body, notificationSchemas.apiSchemas.sendNotification.body, function(err, value) {
-        if (err)
-            next(err);
-        else {
-            notificationService.emit(req.body);
-            res.status(200).end();
-        }
-    });
-
+function sendNotification(req, reply) {
+    notificationService.emit(req.payload);
+    reply().code(204);
 }

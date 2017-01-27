@@ -1,6 +1,3 @@
-const EventEmitter = require('events');
-class EventClass extends EventEmitter {};
-const eventClass = new EventClass();
 const eventNames = {
     socketIO: {
         emit: 'bastion-emit-notification',
