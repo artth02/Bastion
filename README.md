@@ -90,7 +90,7 @@ When we need to send a information to other sockets, bastion provide us two ways
 ```
 #
 ## Recieving Messages from Bastion
-Since your emit ``` bastion-broadcast-notification ``` or ``` bastion-emit-notification ``` bastion your reply you with broadcasting or emitting ``` bastion-notification ``` event. <br/>
+Since your emit ``` bastion-broadcast-notification ``` or ``` bastion-emit-notification ```, bastion will reply you with broadcasting or emitting ``` bastion-notification ``` event. <br/>
 You can handle bastion responses by impementing this code:
  ``` javascript
 
