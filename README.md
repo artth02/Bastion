@@ -1,6 +1,20 @@
 # Bastion
 Realtime notification using Socket I/O
 #
+
+## Running Bastion Api Service
+
+Before you run ``` node app``` don't forget of ``` npm install ``` for getting all of bastion dependences.
+
+### Nedded Environment Variables:
+
+* **NODE_ENV**: 'DEV' or 'PRODUCTION'.
+* **PORT**: HTTP Response port(**default: 10007**).
+* **IOPORT**: Socket-IO response port(**default: 10008**).
+* **CLUSTER**: Amount of clusters.
+
+#
+
 ## Code Examples
 
 ## When in web application/cordova apps
@@ -89,8 +103,8 @@ When we need to send a information to other sockets, bastion provide us two ways
 
 ```
 #
-## Recieving Messages from Bastion
-Since your emit ``` bastion-broadcast-notification ``` or ``` bastion-emit-notification ```, bastion will reply you with broadcasting or emitting ``` bastion-notification ``` event. <br/>
+### Recieving Messages from Bastion
+Since you emit ``` bastion-broadcast-notification ``` or ``` bastion-emit-notification ```, bastion will reply you with broadcasting or emitting ``` bastion-notification ``` event. <br/>
 You can handle bastion responses by impementing this code:
  ``` javascript
 
