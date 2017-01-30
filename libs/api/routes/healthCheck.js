@@ -13,11 +13,12 @@ module.exports = (server, swagger) => {
             },
             description: 'Rota para health check.',
             notes: 'Retorna data atual.',
-            tags: ['api', 'bastion', 'bastion-healthcheck'],
+            tags: ['api', 'Health Check'],
+
             plugins: swagger
                 .document()
                 .ok()
                 .done()
-        }
+        },
     });
 };

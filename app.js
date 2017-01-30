@@ -18,11 +18,14 @@ if (cluster.isMaster && env.api.cluster) {
 
     require('./libs/api/middlewares/preResponse.js')(server);
     require('./libs/api/routes/routes.js')(server);
+    var swaggerConfig = require('./libs/api/swagger/configuration.js');
 
     server.register([
         require('inert'),
         require('vision'),
-        require('hapi-swagger')
+        swaggerConfig.swaggered,
+        swaggerConfig.swaggeredUi
+
     ], (err) => {
         if (err)
             throw err;

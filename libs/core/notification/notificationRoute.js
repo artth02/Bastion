@@ -13,7 +13,7 @@ module.exports = (server, swagger) => {
             },
             description: 'Envia informação para um canal.',
             notes: 'Envia um json para qualquer canal existente na api.',
-            tags: ['api', 'bastion', 'bastion-notification'],
+            tags: ['api', 'Notification'],
             plugins: swagger
                 .document()
                 .ok()
