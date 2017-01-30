@@ -10,7 +10,7 @@ if (cluster.isMaster && env.api.cluster) {
     }
 
     cluster.on('exit', function(worker) {
-        console.error('worker %d died', worker.id);
+        //console.error('worker %d died', worker.id);
         cluster.fork();
     });
 } else {

@@ -23,7 +23,7 @@ function Init() {
     global.connectedClients = {};
     var notificationNamespace = socketIO.of(namespaces.notification);
     notificationNamespace.on('connection', function(socket) {
-        console.log('Connected as: ' + socket.id);
+        //console.log('Connected as: ' + socket.id);
 
         socket.on(eventNames.socketIO.join, function(connectionOptions, ...channels) {
             //Mapeando ID usuário conectado com id do socket;
@@ -31,9 +31,9 @@ function Init() {
             connectedClients[socket.customId] = socket.id;
 
             //Conectando nos canais do parametro
-            console.log('Joined as: ' + socket.customId);
+            //console.log('Joined as: ' + socket.customId);
             channels.forEach(function(channelName) {
-                console.log(socket.customId + ' joined on ' + channelName);
+                // console.log(socket.customId + ' joined on ' + channelName);
                 socket.join(channelName);
             });
         });

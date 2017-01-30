@@ -101,7 +101,6 @@
             return false;
         });
         socket.on('bastion-notification', function(value) {
-            console.log(socket);
             $('#messages').append($('<li>').text(value.title + ': ' + value.body));
             if (Notification.permission === "granted") {
                 var opcoes = {
