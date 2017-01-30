@@ -89,6 +89,19 @@ When we need to send a information to other sockets, bastion provide us two ways
 
 ```
 #
+## Recieving Messages from Bastion
+Since your emit ``` bastion-broadcast-notification ``` or ``` bastion-emit-notification ``` bastion your reply you with broadcasting or emitting ``` bastion-notification ``` event. <br/>
+You can handle bastion responses by impementing this code:
+ ``` javascript
+
+    socket.on('bastion-notification', function(notification) {
+        //Your Code here
+    });
+
+ ```
+ Bastion will put out your data passed in the ``` notification``` param, he won't metter if you pass your data through socket-io event or in the body of a http post.
+ Both will fire ``` bastion-notification ``` event.
+#
 ## With HTTP-POST Request
 Bastion also provide us a http post method, that send your message to any of his channels.<br/>
 See this example above:<br/>
