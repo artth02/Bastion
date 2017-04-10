@@ -6,7 +6,7 @@ const Joi = require('joi'),
 module.exports = (server, swagger) => {
     server.route({
         method: 'GET',
-        path: '/bastion/notification/inspect/channels',
+        path: '/bastion/inspect/channels',
         config: {
             handler: inspectController.inspect,
             validate: {
@@ -26,7 +26,7 @@ module.exports = (server, swagger) => {
 
     server.route({
         method: 'GET',
-        path: '/bastion/notification/inspect/channels/{channelName}',
+        path: '/bastion/inspect/channels/{channelName}',
         config: {
             handler: inspectController.inspectChannel,
             validate: {
