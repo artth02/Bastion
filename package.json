@@ -14,16 +14,42 @@
         "nodejs",
         "api"
     ],
+    "engines": {
+        "node": "8.8.1",
+        "npm": "5.4.2"
+    },
     "author": "Arthur R. Fonseca",
     "license": "",
     "dependencies": {
-        "chalk": ">=1.1.3",
-        "hapi": ">=16.1.0",
-        "hapi-swaggered": ">=2.7.0",
-        "hapi-swaggered-ui": ">=2.5.1",
-        "inert": ">=4.1.0",
-        "joi": ">=10.2.0",
-        "socket.io": ">=1.5.1",
+        "chalk": ">=2.3.0",
+        "hapi": ">=16.6.2",
+        "hapi-swaggered": ">=2.12.2",
+        "hapi-swaggered-ui": ">=2.6.2",
+        "inert": ">=4.2.1",
+        "joi": ">=13.0.1",
+        "socket.io": ">=2.0.4",
         "vision": ">=4.1.1"
+    },
+    "standard": {
+        "parser": "babel-eslint",
+        "globals": [
+            "describe",
+            "it",
+            "test"
+        ]
+    },
+    "nyc": {
+        "include": [
+            "src/**/*.js"
+        ],
+        "require": [
+            "babel-register"
+        ],
+        "exclude": [
+            "packages/**/*"
+        ],
+        "sourceMap": true,
+        "instrument": true,
+        "all": false
     }
 }
