@@ -1,7 +1,7 @@
 {
-    "name": "notification",
+    "name": "bastion-api",
     "version": "1.0.0",
-    "description": "Real Time Notification API",
+    "description": "A Real Time Notification API",
     "main": "app.js",
     "scripts": {
         "start": "node app.js"
