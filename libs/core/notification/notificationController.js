@@ -1,11 +1,10 @@
-var notificationService = require('./notificationService.js'),
-    notificationSchemas = require('./notificationSchemas.js');
+const notificationService = require('./notificationService.js')
 
 module.exports = {
-    sendNotification: sendNotification
-};
+  sendNotification: sendNotification
+}
 
-function sendNotification(req, reply) {
-    notificationService.emit(req.payload);
-    reply().code(204);
+function sendNotification (req, reply) {
+  notificationService.emit(req.payload)
+  reply().code(204)
 }
