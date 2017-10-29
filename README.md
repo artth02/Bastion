@@ -1,11 +1,27 @@
 # Bastion
 A Realtime notification using Socket I/O
 
-## Requirements
+## Running Bastion with Docker
 
-* Node.js (Tested)
+### Requirements
 
-## Running Bastion Api Service
+* docker (tested with 17.09.0-ce)
+* docker-compose (tested with 1.16.1)
+
+### Running
+
+Run the following command:
+
+    docker-compose up
+
+## Running Bastion API manually
+
+### Requirements
+
+* node.js (tested with 8.7)
+* npm (tested with 5.4.2
+
+### Running
 
 Run the following commands:
 

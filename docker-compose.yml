@@ -1,0 +1,15 @@
+version: '3'
+services:
+  web:
+    build: .
+    environment:
+      PORT: 10007
+      IOPORT: 10008
+      CLUSTER: 4
+      NODE_ENV: development
+    ports:
+      - "10007:10007"
+      - "10008:10008"
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
