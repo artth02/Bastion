@@ -6,15 +6,15 @@
   "scripts": {
     "start": "node app.js",
     "test": "npm run lint && nyc npm run test-mocha",
-    "test-mocha": "NODE_ENV=test mocha --harmony --exit ./libs/**/*Spec.js",
-    "test-mocha-watch": "NODE_ENV=test mocha --watch --harmony ./libs/**/*Spec.js",
+    "test-mocha": "cross-env NODE_ENV=test mocha --harmony --exit ./libs/**/*Spec.js",
+    "test-mocha-watch": "cross-env NODE_ENV=test mocha --watch --harmony ./libs/**/*Spec.js",
     "precommit": "npm run git-hook",
     "prepush": "npm run git-hook",
     "git-hook": "npm run lint -s && npm run test -s",
     "lint": "standard --verbose | snazzy",
+    "lint:fix": "standard --fix",
     "lintdiff": "git diff --name-only --cached --relative | grep '\\.js$' | xargs standard | snazzy",
-    "fixcode": "standard --fix",
-    "coverage": "NODE_ENV=test nyc report --reporter=text-lcov | coveralls"
+    "coverage": "cross-env NODE_ENV=test nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
@@ -31,14 +31,18 @@
   "author": "Arthur R. Fonseca",
   "license": "",
   "dependencies": {
-    "chalk": ">=2.3.0",
-    "hapi": ">=16.6.2",
-    "hapi-swaggered": ">=2.12.2",
-    "hapi-swaggered-ui": ">=2.6.2",
-    "inert": ">=4.2.1",
-    "joi": ">=13.0.1",
-    "socket.io": ">=2.0.4",
-    "vision": ">=4.1.1"
+    "aws-sdk": "^2.670.0",
+    "chalk": "^2.3.0",
+    "config": "^3.3.1",
+    "cross-env": "^7.0.2",
+    "dotenv": "^8.2.0",
+    "hapi": "^16.6.2",
+    "hapi-swaggered": "^2.12.2",
+    "hapi-swaggered-ui": "^2.6.2",
+    "inert": "^4.2.1",
+    "joi": "^13.0.1",
+    "socket.io": "^2.3.0",
+    "vision": "^4.1.1"
   },
   "standard": {
     "parser": "babel-eslint",

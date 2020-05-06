@@ -1,8 +1,8 @@
 const Hapi = require('hapi')
-const server = new Hapi.Server()
 const cluster = require('cluster')
-const env = require('./config/environment.js')
+const env = require('config')
 const chalk = require('chalk')
+const sns = require('./libs/infra/aws/sns')
 
 if (cluster.isMaster && env.api.cluster) {
   for (var i = 0; i < env.api.cluster; i += 1) {
@@ -10,11 +10,27 @@ if (cluster.isMaster && env.api.cluster) {
   }
 
   cluster.on('exit', function (worker) {
-        // console.error('worker %d died', worker.id);
+    console.error('worker %d died', worker.id)
     cluster.fork()
   })
 } else {
-  server.connection({ port: env.api.port })
+  let serverOptions
+  if (env.api.env !== 'test') {
+    serverOptions = {
+      debug: {
+        request: ['*']
+      }
+    }
+  }
+
+  const server = new Hapi.Server(serverOptions)
+
+  server.connection({
+    port: env.api.port,
+    routes: {
+      cors: true
+    }
+  })
 
   require('./libs/api/middlewares/preResponse.js')(server)
   require('./libs/api/routes/routes.js')(server)
@@ -34,6 +50,9 @@ if (cluster.isMaster && env.api.cluster) {
         console.error(chalk.red('error'), 'Server fault: ' + err)
       } else {
         console.info(chalk.green('bastion is running'), server.info.protocol + ' server at: ' + chalk.bold(server.info.uri))
+        if (env.aws.sns.enabled) {
+          sns.subscribe(server, env)
+        }
       }
     })
   });
