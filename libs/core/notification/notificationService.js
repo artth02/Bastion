@@ -3,7 +3,8 @@ const eventNames = {
     emit: 'bastion-emit-notification',
     broadcast: 'bastion-broadcast-notification',
     notification: 'bastion-notification',
-    join: 'bastion-join'
+    join: 'bastion-join',
+    brokerSyncNotification: 'bastion-broker-sync-notification'
   }
 }
 
@@ -21,8 +22,15 @@ module.exports = {
 // initialize IO creating the channels
 function Init () {
   global.connectedClients = {}
+
+  socketClient.on('connect', (result, result2) => {
+    console.log('result resultresult', result)
+    socketClient.emit(eventNames.socketIO.join, { customId: 1 }, eventNames.socketIO.brokerSyncNotification)
+  })
+
   var notificationNamespace = socketIO.of(namespaces.notification)
   notificationNamespace.on('connection', function (socket) {
+    console.log('new Connection')
     // console.log(`Connected as: ${socket.id}`)
     socket.on(eventNames.socketIO.join, function (connectionOptions, ...channels) {
       // mapping connected user id with the socket id
@@ -40,6 +48,18 @@ function Init () {
     socket.on(eventNames.socketIO.emit, function (message, ...channels) {
       channels.forEach(function (channelName) {
         socket.in(channelName).emit(eventNames.socketIO.notification, message.notification)
+      })
+    })
+
+    socket.on(eventNames.socketIO.brokerSyncNotification, (sender) => {
+      console.log('socket')
+      syncNodes(sender)
+    })
+
+    socketClient.on(eventNames.socketIO.brokerSyncNotification, (sender) => {
+      console.log('broker sync', eventNames.socketIO.brokerSyncNotification)
+      sender.meta.channels.forEach(function (item) {
+        socketIO.of(namespaces.notification).in(item).emit(eventNames.socketIO.notification, sender.notification)
       })
     })
 
@@ -63,9 +83,21 @@ function Init () {
  * NOTE: this function is called only by POST in the API
  */
 function emit (sender) {
-  sender.meta.channels.forEach(function (item) {
-    socketIO.of(namespaces.notification).in(item).emit(eventNames.socketIO.notification, sender.notification)
-  })
+  // sender.meta.channels.forEach(function (item) {
+  //   socketIO.of(namespaces.notification).in(item).emit(eventNames.socketIO.notification, sender.notification)
+  // })
+
+  socketClient.emit(eventNames.socketIO.brokerSyncNotification, sender)
+}
+
+/**
+ * Method: Emit messages through bastions servers by broker
+ * @param {*} sender - message to sent to some node
+ * @param {*} socket - socketClient
+ */
+function syncNodes (sender) {
+  console.log('sender', sender)
+  socketIO.of(namespaces.notification).in(eventNames.socketIO.brokerSyncNotification).emit(eventNames.socketIO.brokerSyncNotification, sender)
 }
 
 function inspect (callback) {

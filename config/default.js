@@ -21,7 +21,10 @@ module.exports = {
   },
   socketIO: {
     port: process.env.IOPORT || 10008,
-    broker: process.env.SOCKET_BROKER
+    broker: {
+      enabled: process.env.SOCKET_BROKER !== undefined && process.env.SOCKET_BROKER !== null,
+      url: process.env.SOCKET_BROKER
+    }
   },
   aws: {
     configured: process.env.AWS_SECRET_ACCESS_KEY && process.env.AWS_ACCESS_KEY_ID,

@@ -15,13 +15,6 @@ if (cluster.isMaster && env.api.cluster) {
   })
 } else {
   let serverOptions
-  if (env.api.env !== 'test') {
-    serverOptions = {
-      debug: {
-        request: ['*']
-      }
-    }
-  }
 
   const server = new Hapi.Server(serverOptions)
 
@@ -58,8 +51,13 @@ if (cluster.isMaster && env.api.cluster) {
   });
 
   (function loadSocketIO () {
+    const socketServerInfo = server.info.protocol + '://' + server.info.host + ':' + env.socketIO.port
     global.socketIO = require('socket.io')(env.socketIO.port)
+    const io = require('socket.io-client')
+    console.log('env.socketIO.broker.url', env.socketIO.broker.url)
+    global.socketClient = io.connect(env.socketIO.broker.url || `${socketServerInfo}/bastion/notification`)
+
     require('./libs/core/notification/notificationService.js').Init()
-    console.info(chalk.green('bastion is running'), 'socket-IO server at: ' + chalk.bold(server.info.protocol + '://' + server.info.host + ':' + env.socketIO.port))
+    console.info(chalk.green('bastion is running'), 'socket-IO server at: ' + chalk.bold(socketServerInfo))
   })()
 }
