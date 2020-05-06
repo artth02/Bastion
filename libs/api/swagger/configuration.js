@@ -22,6 +22,6 @@ module.exports = {
       title: 'Bastion',
       path: '/bastion/documentation'
     },
-    supportedMethod: ['GET', 'POST', 'PUT', 'DELETE']
+    supportedMethod: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
   }
 }

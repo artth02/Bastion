@@ -9,8 +9,8 @@ module.exports = (server, swagger) => {
           date: new Date()
         }).code(200)
       },
-      description: 'Rota para health check.',
-      notes: 'Retorna data atual.',
+      description: 'Health check route.',
+      notes: 'Retusn current date.',
       tags: ['api', 'Health Check'],
 
       plugins: swagger

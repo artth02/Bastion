@@ -2,9 +2,9 @@ module.exports = (server) => {
   server.ext('onPreResponse', function (request, reply) {
     let response = request.response
     let genericalMessage = {
-      '400': 'As informações enviadas não são válidas.',
-      '404': 'Recurso não encontrado.',
-      '500': 'Erro interno não tratado.'
+      '400': 'Invalid informations.',
+      '404': 'Resource not found.',
+      '500': 'Internal server error.'
     }
 
     if (response.isBoom) {

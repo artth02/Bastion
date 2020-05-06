@@ -10,8 +10,8 @@ module.exports = (server, swagger) => {
       validate: {
         payload: notificationSchemas.sendNotification.body
       },
-      description: 'Envia informação para um canal.',
-      notes: 'Envia um json para qualquer canal existente na api.',
+      description: 'Send data to a channel.',
+      notes: 'Send an information to one or more active channels.',
       tags: ['api', 'Notification'],
       plugins: swagger
                 .document()

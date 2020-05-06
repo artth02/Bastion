@@ -10,8 +10,8 @@ module.exports = (server, swagger) => {
       validate: {
         query: inspectSchema.inspect.query
       },
-      description: 'Canais ativos do bastion.',
-      notes: 'Lista todos os canais de comunicação que estão atualmente ativos no bastion.',
+      description: 'Bastions active channels.',
+      notes: 'List all active chaneels.',
       tags: ['api', 'Inspect'],
       plugins: swagger
                 .document()
@@ -32,8 +32,8 @@ module.exports = (server, swagger) => {
           channelName: inspectSchema.inspectChannel.params.channelName
         }
       },
-      description: 'Sockets ativos nos canais do bastion.',
-      notes: 'Lista todos os sockets conectados nos canais de comunicação que estão atualmente ativos no bastion.',
+      description: 'Active clients in a channel.',
+      notes: 'Lists all connected clients in a channel.',
       tags: ['api', 'Inspect'],
       plugins: swagger
                 .document()
