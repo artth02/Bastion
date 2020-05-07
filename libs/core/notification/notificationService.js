@@ -87,6 +87,7 @@ function emit (sender) {
   //   socketIO.of(namespaces.notification).in(item).emit(eventNames.socketIO.notification, sender.notification)
   // })
 
+  console.log('socketClient', socketClient)
   socketClient.emit(eventNames.socketIO.brokerSyncNotification, sender)
 }
 
