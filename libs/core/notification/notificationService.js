@@ -1,3 +1,4 @@
+const uuid = require('uuid')
 const eventNames = {
   socketIO: {
     emit: 'bastion-emit-notification',
@@ -25,7 +26,7 @@ function Init () {
 
   socketClient.on('connect', (result, result2) => {
     console.log('result resultresult', result)
-    socketClient.emit(eventNames.socketIO.join, { customId: 1 }, eventNames.socketIO.brokerSyncNotification)
+    socketClient.emit(eventNames.socketIO.join, { customId: uuid.v4() }, eventNames.socketIO.brokerSyncNotification)
   })
 
   var notificationNamespace = socketIO.of(namespaces.notification)
@@ -56,12 +57,15 @@ function Init () {
       syncNodes(sender)
     })
 
-    socketClient.on(eventNames.socketIO.brokerSyncNotification, (sender) => {
-      console.log('broker sync', eventNames.socketIO.brokerSyncNotification)
-      sender.meta.channels.forEach(function (item) {
-        socketIO.of(namespaces.notification).in(item).emit(eventNames.socketIO.notification, sender.notification)
+    if (!socketClient.listeners(eventNames.socketIO.brokerSyncNotification).length) {
+      socketClient.on(eventNames.socketIO.brokerSyncNotification, (sender) => {
+        console.log('broker sync', eventNames.socketIO.brokerSyncNotification)
+
+        sender.meta.channels.forEach(function (item) {
+          socketIO.of(namespaces.notification).in(item).emit(eventNames.socketIO.notification, sender.notification)
+        })
       })
-    })
+    }
 
     // fired event when received a `broadcast` from some socket
     socket.on(eventNames.socketIO.broadcast, function (message, ...channels) {

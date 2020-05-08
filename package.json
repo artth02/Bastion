@@ -43,6 +43,7 @@
     "joi": "^13.0.1",
     "socket.io": "^2.3.0",
     "socket.io-client": "^2.3.0",
+    "uuid": "^8.0.0",
     "vision": "^4.1.1"
   },
   "standard": {
