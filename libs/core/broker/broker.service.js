@@ -27,10 +27,10 @@ function addBrokerSyncListener (socket) {
   if (!socketClient.listeners(brokerSyncNotification).length) {
     socketClient.on(brokerSyncNotification, (sender) => {
       sender.meta.channels.forEach(function (item) {
-        socket.client
-                    .of(namespaces.notification)
-                    .in(item)
-                    .emit(eventNames.socketIO.notification, sender.notification)
+        socketIO
+          .of(namespaces.notification)
+          .in(item)
+          .emit(eventNames.socketIO.notification, sender.notification)
       })
     })
   }
