@@ -1,4 +1,4 @@
-const package = require('./../../../package.json')
+const packagejson = require('./../../../package.json')
 const basePath = '/bastion'
 
 module.exports = {
@@ -7,9 +7,9 @@ module.exports = {
     requiredtags: ['api'],
     options: {
       info: {
-        title: `${package.name} manifest`,
-        description: package.description,
-        version: package.version,
+        title: `${packagejson.name} manifest`,
+        description: packagejson.description,
+        version: packagejson.version,
         contact: {
           url: 'https://github.com/artth02/bastion'
         }
