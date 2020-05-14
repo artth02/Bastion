@@ -50,14 +50,16 @@ if (cluster.isMaster && env.api.cluster) {
     })
   });
 
-  (function loadSocketIO () {
+  (() => {
     const socketServerInfo = server.info.protocol + '://' + server.info.host + ':' + env.socketIO.port
     global.socketIO = require('socket.io')(env.socketIO.port)
     const io = require('socket.io-client')
-    console.log('env.socketIO.broker.url', env.socketIO.broker.url)
+    console.info('env.socketIO.broker.url', env.socketIO.broker.url)
     global.socketClient = io.connect(env.socketIO.broker.url || `${socketServerInfo}/bastion/notification`)
 
-    require('./libs/core/notification/notificationService.js').Init()
+    require('./libs/core/notification/notificationService.js').init()
+    require('./libs/core/broker/broker.service').init()
+
     console.info(chalk.green('bastion is running'), 'socket-IO server at: ' + chalk.bold(socketServerInfo))
   })()
 }

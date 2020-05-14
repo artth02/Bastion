@@ -1,0 +1,10 @@
+{
+    "socketIO": {
+        "emit": "bastion-emit-notification",
+        "broadcast": "bastion-broadcast-notification",
+        "notification": "bastion-notification",
+        "join": "bastion-join",
+        "brokerSyncNotification": "bastion-broker-sync-notification",
+        "disconnect": "disconnect"
+    }
+}
