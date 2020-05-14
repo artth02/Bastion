@@ -1,114 +1,89 @@
-const uuid = require('uuid')
-const eventNames = {
-  socketIO: {
-    emit: 'bastion-emit-notification',
-    broadcast: 'bastion-broadcast-notification',
-    notification: 'bastion-notification',
-    join: 'bastion-join',
-    brokerSyncNotification: 'bastion-broker-sync-notification'
-  }
-}
-
-const namespaces = {
-  notification: '/bastion/notification'
-}
-
-module.exports = {
-  Init: Init,
-  emit: emit,
-  inspect: inspect,
-  inspectChannel: inspectChannel
-}
+const brokerService = require('./../broker/broker.service')
+const eventNames = require('../common/eventNames.json')
+const namespaces = require('../common/namespaces.json')
 
 // initialize IO creating the channels
-function Init () {
+function init () {
   global.connectedClients = {}
 
-  socketClient.on('connect', (result, result2) => {
-    console.log('result resultresult', result)
-    socketClient.emit(eventNames.socketIO.join, { customId: uuid.v4() }, eventNames.socketIO.brokerSyncNotification)
-  })
+  const notificationNamespace = socketIO.of(namespaces.notification)
 
-  var notificationNamespace = socketIO.of(namespaces.notification)
-  notificationNamespace.on('connection', function (socket) {
+  notificationNamespace.on('connection', (socket) => {
     console.log('new Connection')
-    // console.log(`Connected as: ${socket.id}`)
-    socket.on(eventNames.socketIO.join, function (connectionOptions, ...channels) {
-      // mapping connected user id with the socket id
-      socket.customId = connectionOptions.customId
-      connectedClients[socket.customId] = socket.id
-      // connecting in the params channels
-      // console.log(`Joined as: ${socket.customId}`)
-      channels.forEach(function (channelName) {
-        // console.log(`${socket.customId} joined on ${channelName}`)
-        socket.join(channelName)
-      })
-    })
 
-    // fired event when received an `emit` from some socket
-    socket.on(eventNames.socketIO.emit, function (message, ...channels) {
-      channels.forEach(function (channelName) {
-        socket.in(channelName).emit(eventNames.socketIO.notification, message.notification)
-      })
-    })
+    brokerService.addBrokerListeners({ client: socketIO })
+    addListeners({ client: socket })
+  })
+}
 
-    socket.on(eventNames.socketIO.brokerSyncNotification, (sender) => {
-      console.log('socket')
-      syncNodes(sender)
-    })
+function addListeners (socket) {
+  join(socket)
+  emit(socket)
+  broadcast(socket)
+  brokerSync(socket)
+  disconnect(socket)
+}
 
-    if (!socketClient.listeners(eventNames.socketIO.brokerSyncNotification).length) {
-      socketClient.on(eventNames.socketIO.brokerSyncNotification, (sender) => {
-        console.log('broker sync', eventNames.socketIO.brokerSyncNotification)
+/**
+ * Method: Socket join event
+ * @param {{client: Object}} socket - socket object with socket clieck to sent messages to everyone connected to api
+ */
+function join (socket) {
+  socket.client.on(eventNames.socketIO.join, (connectionOptions, ...channels) => {
+    // mapping connected user id with the socket id
+    socket.client.customId = connectionOptions.customId
+    connectedClients[socket.client.customId] = socket.client.id
 
-        sender.meta.channels.forEach(function (item) {
-          socketIO.of(namespaces.notification).in(item).emit(eventNames.socketIO.notification, sender.notification)
-        })
-      })
-    }
-
-    // fired event when received a `broadcast` from some socket
-    socket.on(eventNames.socketIO.broadcast, function (message, ...channels) {
-      channels.forEach(function (channelName) {
-        socket.broadcast.in(channelName).emit(eventNames.socketIO.notification, message.notification)
-      })
-    })
-
-    // fired whenever there is a disconnection
-    socket.on('disconnect', function () {
-      delete connectedClients[socket.customId]
-      console.log('Disconnected: ' + socket.customId)
+    // connecting in the params channels
+    channels.forEach((channelName) => {
+      socket.client.join(channelName)
     })
   })
 }
 
 /**
- * emits a signal to the channels of socketIO socket
- * NOTE: this function is called only by POST in the API
+ * Method: Socket emit event
+ * @param {{client: Object}} socket - socket object with socket clieck to sent messages to everyone connected to api
  */
-function emit (sender) {
-  // sender.meta.channels.forEach(function (item) {
-  //   socketIO.of(namespaces.notification).in(item).emit(eventNames.socketIO.notification, sender.notification)
-  // })
-
-  console.log('socketClient', socketClient)
-  socketClient.emit(eventNames.socketIO.brokerSyncNotification, sender)
+function emit (socket) {
+  // fired event when received an `emit` from some socket
+  socket.client.on(eventNames.socketIO.emit, (message, ...channels) => {
+    channels.forEach((channelName) => {
+      socket.client.in(channelName).emit(eventNames.socketIO.notification, message.notification)
+    })
+  })
 }
 
 /**
  * Method: Emit messages through bastions servers by broker
- * @param {*} sender - message to sent to some node
- * @param {*} socket - socketClient
+ * @param {{client: Object}} socket - socketClient
  */
-function syncNodes (sender) {
-  console.log('sender', sender)
-  socketIO.of(namespaces.notification).in(eventNames.socketIO.brokerSyncNotification).emit(eventNames.socketIO.brokerSyncNotification, sender)
+function brokerSync (socket) {
+  socket.client.on(eventNames.socketIO.brokerSyncNotification, (sender) => {
+    socketIO
+      .of(namespaces.notification)
+      .in(eventNames.socketIO.brokerSyncNotification)
+      .emit(eventNames.socketIO.brokerSyncNotification, sender)
+  })
 }
 
-function inspect (callback) {
-  var notificationChannels = socketIO.of(namespaces.notification).adapter.rooms
-  var result = []
-  for (var prop in notificationChannels) {
+/**
+ * Method: Broadcast messages through bastions servers by broker
+ * @param {{client: Object}} socket - socketClient
+ */
+function broadcast (socket) {
+  // fired event when received a `broadcast` from some socket
+  socket.client.on(eventNames.socketIO.broadcast, (message, ...channels) => {
+    channels.forEach((channelName) => {
+      socket.client.broadcast.in(channelName).emit(eventNames.socketIO.notification, message.notification)
+    })
+  })
+}
+
+function inspect () {
+  const notificationChannels = socketIO.of(namespaces.notification).adapter.rooms
+  let result = []
+  for (let prop in notificationChannels) {
     if (prop.toString().indexOf('/') === -1) {
       result.push({
         channelName: prop,
@@ -116,13 +91,22 @@ function inspect (callback) {
       })
     }
   }
-  callback(result)
+
+  return result
 }
 
-function inspectChannel (channelName, callback) {
-  var socketsInChannel = socketIO.of(namespaces.notification).in(channelName).sockets
-  var result = []
-  for (var prop in socketsInChannel) {
+function disconnect (socket) {
+  // fired whenever there is a disconnection
+  socket.client.on(eventNames.socketIO.disconnect, () => {
+    delete connectedClients[socket.client.customId]
+    console.info('disconnected: ' + socket.client.customId)
+  })
+}
+
+function inspectChannel (channelName) {
+  const socketsInChannel = socketIO.of(namespaces.notification).in(channelName).sockets
+  let result = []
+  for (let prop in socketsInChannel) {
     if (socketsInChannel[prop].rooms[channelName]) {
       result.push({
         socketId: socketsInChannel[prop].id,
@@ -130,5 +114,23 @@ function inspectChannel (channelName, callback) {
       })
     }
   }
-  callback(result)
+
+  return result
+}
+
+/**
+ * emits a signal to the channels of socketIO socket
+ * NOTE: this function is called only by POST in the API
+ */
+function brokerEmit (sender) {
+  brokerService.emit({ eventName: eventNames.socketIO.brokerSyncNotification }, sender)
+}
+
+module.exports = {
+  init: init,
+  broker: {
+    emit: brokerEmit
+  },
+  inspect: inspect,
+  inspectChannel: inspectChannel
 }

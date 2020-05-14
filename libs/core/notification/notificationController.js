@@ -5,6 +5,6 @@ module.exports = {
 }
 
 function sendNotification (req, reply) {
-  notificationService.emit(req.payload)
+  notificationService.broker.emit(req.payload)
   reply().code(204)
 }
