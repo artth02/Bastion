@@ -1,16 +1,20 @@
+const package = require('./../../../package.json')
+const basePath = '/bastion'
+
 module.exports = {
   swaggered: {
     register: require('hapi-swaggered'),
     requiredtags: ['api'],
     options: {
       info: {
-        title: 'Bastion Manifest',
-        description: 'An Web-API to broadcast json with socket io and http requests for his clients.',
-        version: '6.6.6',
+        title: `${package.name} manifest`,
+        description: package.description,
+        version: package.version,
         contact: {
           url: 'https://github.com/artth02/bastion'
         }
       },
+      stripPrefix: basePath,
       tagging: {
         mode: 'tags'
       }
@@ -19,8 +23,14 @@ module.exports = {
   swaggeredUi: {
     register: require('hapi-swaggered-ui'),
     options: {
+      auth: false,
+      authorization: {
+        field: 'Authorization',
+        scope: 'header',
+        placeholder: 'Authorization token here'
+      },
       title: 'Bastion',
-      path: '/bastion/documentation'
+      path: `${basePath}/documentation`
     },
     supportedMethod: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
   }
