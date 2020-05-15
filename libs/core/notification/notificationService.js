@@ -11,7 +11,11 @@ function init () {
   notificationNamespace.on('connection', (socket) => {
     console.log('new Connection')
 
-    brokerService.addBrokerListeners({ client: socketIO })
+    brokerService.addBrokerListeners({
+      client: socketIO,
+      server: socket
+    })
+
     addListeners({ client: socket })
   })
 }
@@ -48,9 +52,10 @@ function join (socket) {
 function emit (socket) {
   // fired event when received an `emit` from some socket
   socket.client.on(eventNames.socketIO.emit, (message, ...channels) => {
-    channels.forEach((channelName) => {
-      socket.client.in(channelName).emit(eventNames.socketIO.notification, message.notification)
-    })
+    socketIO
+      .of(namespaces.notification)
+      .in(eventNames.socketIO.brokerSyncNotification)
+      .emit(eventNames.socketIO.brokerSyncNotification, message)
   })
 }
 
@@ -74,9 +79,15 @@ function brokerSync (socket) {
 function broadcast (socket) {
   // fired event when received a `broadcast` from some socket
   socket.client.on(eventNames.socketIO.broadcast, (message, ...channels) => {
-    channels.forEach((channelName) => {
-      socket.client.broadcast.in(channelName).emit(eventNames.socketIO.notification, message.notification)
-    })
+    socketIO
+      .of(namespaces.notification)
+      .in(eventNames.socketIO.brokerBroadcastSyncNotification)
+      .emit(eventNames.socketIO.brokerBroadcastSyncNotification, {
+        meta: {
+          channels
+        },
+        notification: message.notification
+      })
   })
 }
 

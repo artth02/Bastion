@@ -5,6 +5,7 @@
         "notification": "bastion-notification",
         "join": "bastion-join",
         "brokerSyncNotification": "bastion-broker-sync-notification",
+        "brokerBroadcastSyncNotification": "bastion-broker-broadcast-sync-notification",
         "disconnect": "disconnect"
     }
 }

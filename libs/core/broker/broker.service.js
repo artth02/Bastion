@@ -10,11 +10,13 @@ function init () {
   socketClient.on('connect', (result) => {
     console.info('connected to broker', result)
     socketClient.emit(eventNames.socketIO.join, { customId: uuid.v4() }, eventNames.socketIO.brokerSyncNotification)
+    socketClient.emit(eventNames.socketIO.join, { customId: uuid.v4() }, eventNames.socketIO.brokerBroadcastSyncNotification)
   })
 }
 
 function addBrokerListeners (socket) {
   addBrokerSyncListener(socket)
+  addBrokerBroadcastSyncListener(socket)
 }
 
 /**
@@ -31,6 +33,22 @@ function addBrokerSyncListener (socket) {
           .of(namespaces.notification)
           .in(item)
           .emit(eventNames.socketIO.notification, sender.notification)
+      })
+    })
+  }
+}
+
+/**
+ * Method: add broker broadcast sync listener
+ * @param {{client: Object, eventName: string }} socket - socket object
+ */
+function addBrokerBroadcastSyncListener (socket) {
+  const brokerBroadcastSyncNotification = eventNames.socketIO.brokerBroadcastSyncNotification
+
+  if (!socketClient.listeners(brokerBroadcastSyncNotification).length) {
+    socketClient.on(brokerBroadcastSyncNotification, (sender) => {
+      sender.meta.channels.forEach((channelName) => {
+        socket.server.broadcast.in(channelName).emit(eventNames.socketIO.notification, sender.notification)
       })
     })
   }
