@@ -1,12 +1,12 @@
 const inspectController = require('./inspectController.js')
 const inspectSchema = require('./inspectSchemas.js')
 
-module.exports = (server, swagger) => {
+const register = (server, swagger) => {
   server.route({
     method: 'GET',
     path: '/bastion/inspect/channels',
-    config: {
-      handler: inspectController.inspect,
+    handler: inspectController.inspect,
+    options: {
       validate: {
         query: inspectSchema.inspect.query
       },
@@ -14,33 +14,33 @@ module.exports = (server, swagger) => {
       notes: 'List all active chaneels.',
       tags: ['api', 'Inspect'],
       plugins: swagger
-                .document()
-                .ok()
-                .badRequest()
-                .notFound()
-                .done()
+        .document()
+        .ok()
+        .badRequest()
+        .notFound()
+        .done()
     }
   })
 
   server.route({
     method: 'GET',
     path: '/bastion/inspect/channels/{channelName}',
-    config: {
-      handler: inspectController.inspectChannel,
+    handler: inspectController.inspectChannel,
+    options: {
       validate: {
-        params: {
-          channelName: inspectSchema.inspectChannel.params.channelName
-        }
+        params: inspectSchema.inspectChannel.params
       },
-      description: 'Active clients in a channel.',
+      description: 'Lists active clients in a channel.',
       notes: 'Lists all connected clients in a channel.',
       tags: ['api', 'Inspect'],
       plugins: swagger
-                .document()
-                .ok()
-                .badRequest()
-                .notFound()
-                .done()
+        .document()
+        .ok()
+        .badRequest()
+        .notFound()
+        .done()
     }
   })
 }
+
+module.exports = register

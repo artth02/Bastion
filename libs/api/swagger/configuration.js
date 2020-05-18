@@ -3,9 +3,12 @@ const basePath = '/bastion'
 
 module.exports = {
   swaggered: {
-    register: require('hapi-swaggered'),
+    plugin: require('hapi-swaggered'),
     requiredtags: ['api'],
     options: {
+      cors: false,
+      endpoint: '/documentation',
+      responseValidation: false,
       info: {
         title: `${packagejson.name} manifest`,
         description: packagejson.description,
@@ -14,20 +17,22 @@ module.exports = {
           url: 'https://github.com/artth02/bastion'
         }
       },
-      stripPrefix: basePath,
       tagging: {
         mode: 'tags'
       }
     }
   },
   swaggeredUi: {
-    register: require('hapi-swaggered-ui'),
+    plugin: require('hapi-swaggered-ui'),
     options: {
-      auth: false,
       authorization: {
         field: 'Authorization',
         scope: 'header',
+        defaultValue: 'demoKey',
         placeholder: 'Authorization token here'
+      },
+      swaggerOptions: {
+        validatorUrl: null
       },
       title: 'Bastion',
       path: `${basePath}/documentation`

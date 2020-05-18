@@ -38,7 +38,7 @@ function internalServerError (model, description) {
 }
 
 function documentResponse (model, description) {
-  let document = { description }
+  const document = { description }
 
   if (model) { document.schema = model }
 

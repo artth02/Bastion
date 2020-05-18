@@ -5,7 +5,7 @@ module.exports = (server, swagger) => {
   server.route({
     method: 'POST',
     path: '/bastion/notification',
-    config: {
+    options: {
       handler: notificationController.sendNotification,
       validate: {
         payload: notificationSchemas.sendNotification.body
@@ -14,11 +14,11 @@ module.exports = (server, swagger) => {
       notes: 'Send an information to one or more active channels.',
       tags: ['api', 'Notification'],
       plugins: swagger
-                .document()
-                .ok()
-                .badRequest()
-                .notFound()
-                .done()
+        .document()
+        .ok()
+        .badRequest()
+        .notFound()
+        .done()
     }
   })
 }

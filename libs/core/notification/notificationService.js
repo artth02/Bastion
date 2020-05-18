@@ -93,8 +93,8 @@ function broadcast (socket) {
 
 function inspect () {
   const notificationChannels = socketIO.of(namespaces.notification).adapter.rooms
-  let result = []
-  for (let prop in notificationChannels) {
+  const result = []
+  for (const prop in notificationChannels) {
     if (prop.toString().indexOf('/') === -1) {
       result.push({
         channelName: prop,
@@ -116,8 +116,8 @@ function disconnect (socket) {
 
 function inspectChannel (channelName) {
   const socketsInChannel = socketIO.of(namespaces.notification).in(channelName).sockets
-  let result = []
-  for (let prop in socketsInChannel) {
+  const result = []
+  for (const prop in socketsInChannel) {
     if (socketsInChannel[prop].rooms[channelName]) {
       result.push({
         socketId: socketsInChannel[prop].id,
