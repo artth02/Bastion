@@ -5,8 +5,8 @@ A Realtime notification using Socket I/O
 
 ### Requirements
 
-* docker (tested with 17.09.0-ce)
-* docker-compose (tested with 1.16.1)
+* docker (tested with 19.03.8)
+* docker-compose (tested with 1.25.5)
 
 ### Running
 
@@ -18,8 +18,8 @@ Run the following command:
 
 ### Requirements
 
-* node.js (tested with 8.7)
-* npm (tested with 5.4.2
+* node.js (tested with 14.2.0)
+* npm (tested with 6.14.4)
 
 ### Running
 
@@ -33,6 +33,7 @@ Run the following commands:
 * **NODE_ENV**: development, production.
 * **PORT**: HTTP Response port(**default: 10007**).
 * **IOPORT**: Socket-IO response port(**default: 10008**).
+* **SOCKET_BROKER**: Broker endpoint to be used to share messages across nodes when scaled up.(**optional**)
 * **CLUSTER**: Amount of clusters.
 
 * **NODE_ENV** (`development`) - the running project environment
@@ -159,7 +160,7 @@ The object that Bastion expects us to send in the request body is (**THE SAME ST
 ### Bastion responses
 
 ### Success
-**Status Code:** 200 - OK
+**Status Code:** 200 - OK | 204 - No content
 
 **Request Body:**
 
