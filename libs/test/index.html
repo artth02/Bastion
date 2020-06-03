@@ -64,8 +64,8 @@
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
         Notification.requestPermission();
-        window.socket = io.connect('http://localhost:10008/bastion/notification');
-        // window.socket = io.connect('http://bastion.staging.dt-feeder.com.br/bastion/notification', { reconnection: true, rejectUnauthorized: false });
+        // window.socket = io.connect('http;://localhost:10008/bastion/notification');
+        window.socket = io.connect('http://dt-feeder-staging-bastion-709280553.sa-east-1.elb.amazonaws.com/bastion/notification', { reconnection: true, rejectUnauthorized: false });
 
         socket.on('connect', function () {
             $('#messages').append($('<li>').text('Conectado'));

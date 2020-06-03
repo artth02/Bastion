@@ -63,9 +63,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
-        Notification.requestPermission();
-        // window.socket = new WebSocket('ws://192.168.1.3:10009');
-        window.socket = io.connect('http://bastion.staging.dt-feeder.com.br/bastion/notification', { reconnection: true, rejectUnauthorized: false });
+        window.socket = new WebSocket('ws://dt-feeder-staging-bastion-709280553.sa-east-1.elb.amazonaws.com:10009');
+        // window.socket = io.connect('ws://dt-feeder-staging-bastion-709280553.sa-east-1.elb.amazonaws.com:10009', { reconnection: true, rejectUnauthorized: false });
 
         socket.onerror = (error) => {
             console.log('error', error)
@@ -98,7 +97,6 @@
             return false
         })
 
-        console.log('socket', socket)
         socket.onmessage = event => {
             console.log('on message', event)
             const data = JSON.parse(event.data)
