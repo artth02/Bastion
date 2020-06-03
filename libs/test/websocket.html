@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Socket.IO chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font: 13px Helvetica, Arial;
+        }
+
+        form {
+            background: #000;
+            padding: 3px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        form input {
+            border: 0;
+            padding: 10px;
+            width: 90%;
+            margin-right: .5%;
+        }
+
+        form button {
+            width: 9%;
+            background: rgb(130, 224, 255);
+            border: none;
+            padding: 10px;
+        }
+
+        #messages {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        #messages li {
+            padding: 5px 10px;
+        }
+
+        #messages li:nth-child(odd) {
+            background: #eee;
+        }
+    </style>
+
+</head>
+
+<body>
+    <label id="id"></label>
+    <ul id="messages"></ul>
+    <form action="">
+        <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+    <!--<script src="http://localhost:10008/socket.io/socket.io.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+        Notification.requestPermission();
+        // window.socket = new WebSocket('ws://192.168.1.3:10009');
+        window.socket = io.connect('http://bastion.staging.dt-feeder.com.br/bastion/notification', { reconnection: true, rejectUnauthorized: false });
+
+        socket.onerror = (error) => {
+            console.log('error', error)
+        }
+
+        socket.onopen = (data) => {
+            console.log('Open data', data)
+            $('#messages').append($('<li>').text('Conectado'));
+        }
+
+        socket.onclose = (data) => {
+            console.log('Close data', data)
+            console.log('connection closed')
+        }
+
+        $('form').submit(function () {
+            var message = {
+                meta: {
+                    to: 'customId'
+                },
+                notification: {
+                    title: id,
+                    body: $('#m').val(),
+                    timestamp: new Date().getTime()
+                }
+            }
+
+            socket.send(JSON.stringify(message))
+            $('#m').val('')
+            return false
+        })
+
+        console.log('socket', socket)
+        socket.onmessage = event => {
+            console.log('on message', event)
+            const data = JSON.parse(event.data)
+            const value = data.notification
+            $('#messages').append($('<li>').text(`${new Date().getTime() - value.timestamp} ms` + value.title + ': ' + value.body));
+        }
+
+    </script>
+</body>
+
+</html>

@@ -19,6 +19,9 @@ module.exports = {
     port: process.env.PORT || 10007,
     cluster: process.env.CLUSTER
   },
+  websocket:{
+    port: process.env.WS_PORT || 10009
+  },
   socketIO: {
     port: process.env.IOPORT || 10008,
     broker: {

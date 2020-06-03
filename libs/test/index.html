@@ -96,6 +96,7 @@
                 }
             }
             socket.emit('bastion-broadcast-notification', message, 'DOL');
+            socket.send(message);
             $('#m').val('');
             return false;
         });

@@ -24,4 +24,12 @@ module.exports = (server, swagger) => {
       return reply.file(path.join(__dirname, './../../test/index.html'))
     }
   })
+
+  server.route({
+    method: 'GET',
+    path: '/bastion/ws',
+    handler: (request, reply) => {
+      return reply.file(path.join(__dirname, './../../test/websocket.html'))
+    }
+  })
 }

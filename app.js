@@ -53,6 +53,7 @@ if (cluster.isMaster && env.api.cluster) {
 
     require('./libs/core/notification/notificationService.js').init()
     require('./libs/core/broker/broker.service').init()
+    require('./libs/infra/websocket/index').init()
 
     console.info(chalk.green('bastion is running'), 'socket-IO server at: ' + chalk.bold(socketServerInfo))
   })()
