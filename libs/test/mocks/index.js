@@ -39,7 +39,7 @@ function mocks (socket, data) {
     console.log('mock data', data)
   } catch (ex) {
     console.log('ex', ex)
-    socket.error(ex)
+    socket.send(JSON.stringify({ type: 'error', data: ex.message }))
   }
 
   const symb = Symbol.getSymbolsList()
@@ -47,7 +47,7 @@ function mocks (socket, data) {
   switch (data.type) {
     case 'login': {
       const response = new Login(data)
-      return response
+      return { type: data.type, data: response }
     }
     case 'subscribeSymbol': {
       if (!clients.some(x => x.id === socket.id)) {
@@ -61,11 +61,11 @@ function mocks (socket, data) {
       }
 
       console.log('>>>> pushed', data.symbol)
-      return socket.symbols
+      return { type: data.JSONtype, data: socket.symbols }
     }
 
     case 'retrieveSymbolsList': {
-      return Symbol.getSymbolsList()
+      return { type: data.type, data: Symbol.getSymbolsList() }
     }
     case 'listOrders': {
       const ordersList = []
@@ -73,20 +73,24 @@ function mocks (socket, data) {
       for (let i = 0; i < symb.length; i++) {
         ordersList.push(new Order(symb))
       }
-      return ordersList
+      return { type: data.type, data: ordersList }
     }
     case 'books': {
       const booksList = []
       const lastPrice = parseFloat(faker.finance.amount(100, 1000, 2))
-      const item = symb.find(x => x.name === data.symbol)
+      let item = symb.find(x => x.name === data.symbol)
+      if (!item) {
+        item = symb[0]
+      }
+
       for (let i = 0; i < 10; i++) {
         item.lastPrice = lastPrice
         booksList.push(new Book(item))
       }
-      return booksList
+      return { type: data.type, data: booksList }
     }
     case 'wallet': {
-      return new Wallet()
+      return { type: data.type, data: new Wallet() }
     }
     default: {
       return undefined
