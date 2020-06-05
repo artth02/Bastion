@@ -1,6 +1,9 @@
 const Login = require('./login')
 const Symbol = require('./Symbol')
 const Order = require('./Order')
+const Book = require('./Book')
+const faker = require('faker')
+const Wallet = require('./Wallet')
 
 let clients = []
 async function start (socket) {
@@ -39,6 +42,8 @@ function mocks (socket, data) {
     socket.error(ex)
   }
 
+  const symb = Symbol.getSymbolsList()
+
   switch (data.type) {
     case 'login': {
       const response = new Login(data)
@@ -64,12 +69,24 @@ function mocks (socket, data) {
     }
     case 'listOrders': {
       const ordersList = []
-      const symb = Symbol.getSymbolsList()
 
       for (let i = 0; i < symb.length; i++) {
         ordersList.push(new Order(symb))
       }
       return ordersList
+    }
+    case 'books': {
+      const booksList = []
+      const lastPrice = parseFloat(faker.finance.amount(100, 1000, 2))
+      const item = symb.find(x => x.name === data.symbol)
+      for (let i = 0; i < 10; i++) {
+        item.lastPrice = lastPrice
+        booksList.push(new Book(item))
+      }
+      return booksList
+    }
+    case 'wallet': {
+      return new Wallet()
     }
     default: {
       return undefined
