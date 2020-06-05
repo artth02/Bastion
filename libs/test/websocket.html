@@ -63,8 +63,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
-        window.socket = new WebSocket('ws://dt-feeder-staging-bastion-709280553.sa-east-1.elb.amazonaws.com:10009');
-        // window.socket = io.connect('ws://dt-feeder-staging-bastion-709280553.sa-east-1.elb.amazonaws.com:10009', { reconnection: true, rejectUnauthorized: false });
+        window.socket = new WebSocket('ws://localhost:10009');
+        // window.socket = new WebSocket('ws://dt-feeder-staging-bastion-709280553.sa-east-1.elb.amazonaws.com:10009');
 
         socket.onerror = (error) => {
             console.log('error', error)
@@ -81,27 +81,29 @@
         }
 
         $('form').submit(function () {
+            const body = $('#m').val()
+            console.log('body', body)
             var message = {
                 meta: {
                     to: 'customId'
                 },
                 notification: {
                     title: id,
-                    body: $('#m').val(),
+                    body: body,
                     timestamp: new Date().getTime()
                 }
             }
 
-            socket.send(JSON.stringify(message))
+            socket.send(body)
             $('#m').val('')
             return false
         })
 
         socket.onmessage = event => {
-            console.log('on message', event)
+            console.log('on message', event.data)
             const data = JSON.parse(event.data)
             const value = data.notification
-            $('#messages').append($('<li>').text(`${new Date().getTime() - value.timestamp} ms` + value.title + ': ' + value.body));
+            $('#messages').append($('<li>').text(value.title + ': ' + value.body));
         }
 
     </script>
