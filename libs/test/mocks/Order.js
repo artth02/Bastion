@@ -1,7 +1,7 @@
 const faker = require('faker')
 
 class Order {
-  constructor (data = {}) {
+  constructor(data = {}) {
     const price = faker.random.number({ min: 100, max: 300 })
     const quantity = faker.random.number({ min: 1, max: 100 })
     const status = faker.random.arrayElement([
@@ -32,6 +32,7 @@ class Order {
       executedQuantity: faker.random.arrayElement([quantity, quantity - 1])
     }
     this.type = faker.random.arrayElement(['buy', 'sell'])
+    this.category = faker.random.arrayElement(['Limitada', 'Stop', 'Start', 'Stop Móvel', 'Estratégica', 'Termo'])
     this.status = status
   }
 }
