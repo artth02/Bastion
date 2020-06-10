@@ -62,6 +62,7 @@
     <!--<script src="http://localhost:10008/socket.io/socket.io.js"></script>-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/pako/1.0.3/pako.min.js"></script>
     <script>
         window.socket = new WebSocket('ws://localhost:10009');
         // window.socket = new WebSocket('ws://dt-feeder-staging-bastion-709280553.sa-east-1.elb.amazonaws.com:10009');
@@ -99,11 +100,17 @@
             return false
         })
 
-        socket.onmessage = event => {
+        socket.onmessage = async event => {
+            console.log('event', event)
+            console.log('event.data', event.data)
+           
+            const inflatedData = pako.inflate(event.data)
+            console.log('inflated data', inflatedData)
+            // const buff = await inflatedData.arrayBuffer()
+            console.log('decoded 2', JSON.parse(String.fromCharCode.apply(null, new Uint8Array(inflatedData))))
             console.log('on message', event.data)
-            const data = JSON.parse(event.data)
-            const value = data.notification
-            $('#messages').append($('<li>').text(value.title + ': ' + value.body));
+            
+            // $('#messages').append($('<li>').text(value.title + ': ' + value.body));
         }
 
     </script>

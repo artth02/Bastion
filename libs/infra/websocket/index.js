@@ -2,12 +2,13 @@ const WebSocket = require('ws')
 const config = require('config')
 const chalk = require('chalk')
 const mocks = require('./../../test/mocks/index')
+const pako = require('pako')
 const uuid = require('uuid')
 
 /**
  * Method: Initialize websocket server
  */
-function init () {
+function init() {
   if (!config.websocket.port) {
     console.error(`${chalk.red('websocket not initialized - missing websocket server port in confi file')}`)
     return
@@ -39,7 +40,7 @@ function init () {
   register(wsServer)
 }
 
-function register (wss) {
+function register(wss) {
   wss.on('connection', (ws, request, client) => {
     ws.id = uuid.v4()
     console.log('ws connection')
@@ -49,11 +50,16 @@ function register (wss) {
       const mockData = mocks.mocks(ws, data)
       console.log('mockdata', mockData)
       if (mockData) {
-        ws.send(JSON.stringify(mockData))
+        const response =  Buffer.from(JSON.stringify(mockData))
+        const binaryString = pako.deflate(response, {to: 'string'})
+        
+        ws.send(binaryString)
+        console.log('binary stirng', binaryString)
+        console.log('encoded', response)
         console.log('mockData', mockData)
       } else {
         // Calls notification service here to send messagens through socket
-        wss.clients.forEach(function each (client) {
+        wss.clients.forEach(function each(client) {
           if (client.readyState === WebSocket.OPEN) {
             client.send(data)
           }
