@@ -39,7 +39,7 @@ function getSymbolsList () {
   },
   {
     name: 'PETR4',
-    description: 'Petrobras'
+    description: 'Petrobrás'
   },
   {
     name: 'MGLU3',
