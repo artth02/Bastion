@@ -15,7 +15,7 @@ async function start(socket) {
 
     const item = socket.symbols[i]
     console.log('send', item)
-    const response = Buffer.from(JSON.stringify(Symbol.getMarketPrices(item)))
+    const response = Buffer.from(JSON.stringify({ type: "subscribeSymbol", data: Symbol.getMarketPrices(item) }))
     const binaryString = pako.deflate(response, { to: 'string' })
 
     socket.send(binaryString)
