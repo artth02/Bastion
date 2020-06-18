@@ -49,10 +49,10 @@ function register(wss) {
       console.log('data')
       const mockData = mocks.mocks(ws, data)
       console.log('mockdata', mockData)
+      const response = Buffer.from(JSON.stringify(mockData || data))
+      const binaryString = pako.deflate(response, { to: 'string' })
+
       if (mockData) {
-        const response =  Buffer.from(JSON.stringify(mockData))
-        const binaryString = pako.deflate(response, {to: 'string'})
-        
         ws.send(binaryString)
         console.log('binary stirng', binaryString)
         console.log('encoded', response)
@@ -61,7 +61,7 @@ function register(wss) {
         // Calls notification service here to send messagens through socket
         wss.clients.forEach(function each(client) {
           if (client.readyState === WebSocket.OPEN) {
-            client.send(data)
+            client.send(binaryString)
           }
         })
       }
