@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bastion docs</title>
+  <meta name="description" content="Bastion reference: running it, environment variables, Socket.IO events, the HTTP API and responses.">
+  <meta name="theme-color" content="#070a09">
+  <link rel="icon" href="assets/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <a class="brand" href="index.html"><img src="assets/logo.svg" alt="">Bastion</a>
+      <nav aria-label="Pages">
+        <a href="index.html#why">Why</a>
+        <a href="index.html#start">Quick start</a>
+        <a href="index.html#scale">Scale</a>
+        <a href="index.html#api">API</a>
+        <a class="keep here" href="docs.html">Docs</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="doc-hero">
+      <div class="wrap">
+        <p class="kicker">Documentation</p>
+        <h1>Everything Bastion speaks.</h1>
+        <p>How to run it, how to configure it, and every event and route your apps use to talk to it.</p>
+      </div>
+    </section>
+
+    <div class="wrap doc">
+      <nav class="toc" aria-label="On this page">
+        <a href="#run">Running</a>
+        <a href="#env">Environment</a>
+        <a href="#connect">Connecting</a>
+        <a href="#join">Joining</a>
+        <a href="#messaging">Messaging</a>
+        <a href="#receive">Receiving</a>
+        <a href="#http">HTTP API</a>
+        <a href="#responses">Responses</a>
+      </nav>
+
+      <article>
+        <section id="run">
+          <p class="kicker">01</p>
+          <h2>Running Bastion</h2>
+          <h3>With Docker</h3>
+          <p>Requires Docker and docker-compose. The compose file starts four workers with the API on <code>10007</code> and Socket.IO on <code>10008</code>.</p>
+          <div class="code"><div class="code-bar"><span>terminal</span></div><pre>docker-compose up</pre></div>
+          <h3>By hand</h3>
+          <p>Requires Node.js 14.2+ and npm 6.14+.</p>
+          <div class="code"><div class="code-bar"><span>terminal</span></div><pre>npm install
+npm start</pre></div>
+        </section>
+
+        <section id="env">
+          <p class="kicker">02</p>
+          <h2>Environment variables</h2>
+          <p>Read from the environment or from a <code>.env</code> file at the project root.</p>
+          <table class="table">
+            <thead><tr><th>Variable</th><th>Default</th><th>What it sets</th></tr></thead>
+            <tbody>
+              <tr><td><code>NODE_ENV</code></td><td>development</td><td>Running environment: development or production</td></tr>
+              <tr><td><code>PORT</code></td><td>10007</td><td>HTTP API port</td></tr>
+              <tr><td><code>IOPORT</code></td><td>10008</td><td>Socket.IO port</td></tr>
+              <tr><td><code>CLUSTER</code></td><td>off</td><td>Number of worker processes. When set, enables the multi-core manager, which restarts workers that die</td></tr>
+              <tr><td><code>SOCKET_BROKER</code></td><td>optional</td><td>Broker endpoint used to share messages across nodes when scaled out</td></tr>
+              <tr><td><code>AWS_SNS_TOPIC_ARN</code></td><td>optional</td><td>With <code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_ACCESS_KEY</code> and <code>AWS_REGION</code>, Bastion subscribes its notification route to this SNS topic on start</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="connect">
+          <p class="kicker">03 · Web and Cordova apps</p>
+          <h2>Connecting</h2>
+          <p>Load the Socket.IO client that Bastion serves on its IO port. The path is always the one below unless you change Bastion's code.</p>
+          <div class="code"><div class="code-bar"><span>index.html</span></div><pre>&lt;script src=<span class="s">"http://bastionHost:10008/socket.io/socket.io.js"</span>&gt;&lt;/script&gt;</pre></div>
+          <p>Then connect to the <code>/bastion/notification</code> namespace. A <code>connect</code> event means you're in.</p>
+          <div class="code"><div class="code-bar"><span>app.js</span></div><pre><span class="c">// host:socket-io-port/bastion-namespace</span>
+window.socket = io.<span class="f">connect</span>(<span class="s">'http://bastionHost:10008/bastion/notification'</span>)
+
+socket.<span class="f">on</span>(<span class="s">'connect'</span>, () =&gt; {
+  <span class="c">// connected</span>
+})</pre></div>
+        </section>
+
+        <section id="join">
+          <p class="kicker">04</p>
+          <h2>Joining channels</h2>
+          <p>Emit <code>bastion-join</code> with a <strong>custom id</strong> (any id that means something to you, like a user id) followed by one or more channel names.</p>
+          <div class="code"><div class="code-bar"><span>app.js</span></div><pre>socket.<span class="f">on</span>(<span class="s">'connect'</span>, () =&gt; {
+  socket.<span class="f">emit</span>(<span class="s">'bastion-join'</span>, { customId: id }, <span class="s">'channel-name'</span>)
+})</pre></div>
+        </section>
+
+        <section id="messaging">
+          <p class="kicker">05</p>
+          <h2>Messaging</h2>
+          <p>A Bastion message has two parts. <strong>meta</strong> tells Bastion where it goes. <strong>notification</strong> is what you send: an object, array, string or number. Bastion never looks inside it.</p>
+          <div class="code"><div class="code-bar"><span>message</span></div><pre>{
+  meta: {
+    channels: [<span class="s">'index'</span>, <span class="s">'channel1'</span>]  <span class="c">// who receives it</span>
+  },
+  notification: {}                   <span class="c">// anything you like</span>
+}</pre></div>
+          <p>From a socket there are two ways to send:</p>
+          <table class="table">
+            <thead><tr><th>Event</th><th>Delivers to</th></tr></thead>
+            <tbody>
+              <tr><td><code>bastion-emit-notification</code></td><td>Every socket in the channel, <strong>including</strong> the sender</td></tr>
+              <tr><td><code>bastion-broadcast-notification</code></td><td>Every socket in the channel <strong>except</strong> the sender</td></tr>
+            </tbody>
+          </table>
+          <div class="code"><div class="code-bar"><span>app.js</span></div><pre><span class="c">// broadcast</span>
+socket.<span class="f">emit</span>(<span class="s">'bastion-broadcast-notification'</span>, message, <span class="s">'receiving channel'</span>)
+
+<span class="c">// emit</span>
+socket.<span class="f">emit</span>(<span class="s">'bastion-emit-notification'</span>, message, <span class="s">'receiving channel'</span>)</pre></div>
+        </section>
+
+        <section id="receive">
+          <p class="kicker">06</p>
+          <h2>Receiving</h2>
+          <p>Whatever the source (a socket emit, a broadcast or an HTTP POST), listeners get a <code>bastion-notification</code> event carrying the <code>notification</code> value.</p>
+          <div class="code"><div class="code-bar"><span>app.js</span></div><pre>socket.<span class="f">on</span>(<span class="s">'bastion-notification'</span>, (notification) =&gt; {
+  <span class="c">// your code here</span>
+})</pre></div>
+        </section>
+
+        <section id="http">
+          <p class="kicker">07</p>
+          <h2>HTTP API</h2>
+          <p>Served on the API port (<code>10007</code> by default), not the Socket.IO port.</p>
+          <h3><span class="verb post">POST</span> /bastion/notification</h3>
+          <p>Sends a message to any of Bastion's channels. The body is the same structure as in <a href="#messaging">Messaging</a>.</p>
+          <div class="code"><div class="code-bar"><span>request body</span></div><pre>{
+  <span class="s">"meta"</span>: { <span class="s">"channels"</span>: [<span class="s">"index"</span>, <span class="s">"channel1"</span>] },
+  <span class="s">"notification"</span>: {}
+}</pre></div>
+          <h3><span class="verb get">GET</span> /bastion/inspect/channels</h3>
+          <p>Lists the open channels and how many sockets are in each.</p>
+          <h3><span class="verb get">GET</span> /bastion/inspect/channels/{channelName}</h3>
+          <p>Lists the sockets in one channel, with their socket id and custom id.</p>
+          <h3><span class="verb get">GET</span> /bastion/healthcheck/ping</h3>
+          <p>Liveness check for load balancers and orchestrators.</p>
+        </section>
+
+        <section id="responses">
+          <p class="kicker">08</p>
+          <h2>Responses</h2>
+          <h3>Success</h3>
+          <p><code>200 OK</code> or <code>204 No Content</code>, with an empty body.</p>
+          <h3>Errors</h3>
+          <p>Errors share one shape. The default messages are in Portuguese.</p>
+          <div class="code"><div class="code-bar"><span>404</span></div><pre>{
+  <span class="s">"developerMessage"</span>: <span class="s">"A operação solicitada não foi encontrada"</span>,
+  <span class="s">"userMessageTranslated"</span>: <span class="s">"Não foi possivel concluir a operação solicitada"</span>,
+  <span class="s">"errorCode"</span>: 404,
+  <span class="s">"moreInfo"</span>: {
+    <span class="s">"developerMessage"</span>: <span class="s">"Recurso não encontrado"</span>,
+    <span class="s">"message"</span>: <span class="s">"A operação solicitada não foi encontrada"</span>,
+    <span class="s">"status"</span>: 404
+  }
+}</pre></div>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap">
+      <span>Bastion · real-time notification API</span>
+      <span>Node.js · Socket.IO · Hapi</span>
+    </div>
+  </footer>
+  <script src="assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bastion · real-time notifications</title>
+  <meta name="description" content="Bastion is a real-time notification server built on Socket.IO. Join channels, emit or broadcast, or push from any backend with one HTTP POST.">
+  <meta property="og:title" content="Bastion · real-time notifications">
+  <meta property="og:description" content="Join channels, emit or broadcast, or push from any backend with one HTTP POST.">
+  <meta name="theme-color" content="#070a09">
+  <link rel="icon" href="assets/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <a class="brand" href="#top"><img src="assets/logo.svg" alt="">Bastion</a>
+      <nav aria-label="Sections">
+        <a href="#why">Why</a>
+        <a href="#start">Quick start</a>
+        <a href="#scale">Scale</a>
+        <a href="#api">API</a>
+        <a class="keep" href="docs.html">Docs</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap">
+        <div>
+          <p class="kicker">Real-time notification server</p>
+          <h1>Push it once.<br><em>Every socket hears it.</em></h1>
+          <p class="lead">Bastion sits between your backends and your clients. Sockets join channels; anything you send, from a browser, a Cordova app or one HTTP POST, lands in every socket on those channels.</p>
+          <div class="actions">
+            <a class="btn btn-primary" href="#start">Quick start</a>
+            <a class="btn btn-ghost" href="docs.html">Read the docs</a>
+          </div>
+          <div class="chips">
+            <span class="chip">Node.js</span><span class="chip">Socket.IO</span><span class="chip">Hapi</span><span class="chip">Docker</span><span class="chip">AWS SNS</span>
+          </div>
+        </div>
+
+        <div class="live" aria-label="Animated diagram: messages flowing through Bastion into channels">
+          <div class="live-bar"><span><span class="dot"></span>bastion · live</span><span>/bastion/notification</span></div>
+          <svg viewBox="0 0 560 290" data-live>
+            <g class="wires">
+              <path class="wire" id="in0" d="M140 55 C190 55 190 145 230 145"/>
+              <path class="wire" id="in1" d="M140 145 L230 145"/>
+              <path class="wire" id="in2" d="M140 235 C190 235 190 145 230 145"/>
+              <path class="wire" id="out0" d="M330 145 C380 145 380 55 420 55"/>
+              <path class="wire" id="out1" d="M330 145 L420 145"/>
+              <path class="wire" id="out2" d="M330 145 C380 145 380 235 420 235"/>
+            </g>
+            <g class="node" data-src="0"><rect x="20" y="37" width="120" height="36" rx="8"/><text x="80" y="60" text-anchor="middle">HTTP POST</text></g>
+            <g class="node" data-src="1"><rect x="20" y="127" width="120" height="36" rx="8"/><text x="80" y="150" text-anchor="middle">socket.emit</text></g>
+            <g class="node" data-src="2"><rect x="20" y="217" width="120" height="36" rx="8"/><text x="80" y="240" text-anchor="middle">AWS SNS</text></g>
+            <g class="node core"><rect x="230" y="110" width="100" height="70" rx="12"/><text x="280" y="142" text-anchor="middle">Bastion</text><text x="280" y="160" text-anchor="middle" style="font-size:10px;fill:#74847a;font-weight:400">:10007 · :10008</text></g>
+            <g class="node" data-ch="0"><rect x="420" y="37" width="120" height="36" rx="8"/><text x="480" y="60" text-anchor="middle">#orders</text></g>
+            <g class="node" data-ch="1"><rect x="420" y="127" width="120" height="36" rx="8"/><text x="480" y="150" text-anchor="middle">#chat</text></g>
+            <g class="node" data-ch="2"><rect x="420" y="217" width="120" height="36" rx="8"/><text x="480" y="240" text-anchor="middle">#index</text></g>
+            <g data-pulses></g>
+          </svg>
+          <div class="log" data-log aria-hidden="true"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="why" class="block">
+      <div class="wrap">
+        <div class="head">
+          <p class="kicker">01 · Why Bastion</p>
+          <h2>A message bus your frontend can talk to.</h2>
+          <p>Bastion doesn't care what you send. Objects, arrays, strings, numbers: it only carries them to the right sockets. You decide who listens.</p>
+        </div>
+        <div class="grid3">
+          <div class="card">
+            <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M5 12a7 7 0 0 1 14 0M2 12a10 10 0 0 1 20 0"/></svg></div>
+            <h3>Channels</h3>
+            <p>Sockets join one or more channels with <code>bastion-join</code> and a custom id of your choice, such as a user or a device.</p>
+          </div>
+          <div class="card">
+            <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M14 6l6 6-6 6"/></svg></div>
+            <h3>Emit or broadcast</h3>
+            <p>Emit reaches everyone on the channel, sender included. Broadcast reaches everyone except the sender. Both arrive as <code>bastion-notification</code>.</p>
+          </div>
+          <div class="card">
+            <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="M8 10h8M8 14h5"/></svg></div>
+            <h3>Push from any backend</h3>
+            <p>No socket needed server-side: POST to <code>/bastion/notification</code> with a list of channels, or let Bastion subscribe to an AWS SNS topic.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="start" class="block">
+      <div class="wrap split">
+        <div>
+          <div class="head" style="margin-bottom:32px">
+            <p class="kicker">02 · Quick start</p>
+            <h2>Running in a minute.</h2>
+            <p>One container, two ports: the HTTP API on <code>10007</code> and Socket.IO on <code>10008</code>.</p>
+          </div>
+          <ol class="steps">
+            <li><span><strong>Start it</strong><code>docker-compose up</code>, or <code>npm install && npm start</code> on Node 14.</span></li>
+            <li><span><strong>Connect</strong>Load the Socket.IO client from Bastion and open the <code>/bastion/notification</code> namespace.</span></li>
+            <li><span><strong>Join</strong>Emit <code>bastion-join</code> with your custom id and the channels to listen on.</span></li>
+            <li><span><strong>Listen</strong>Handle <code>bastion-notification</code>. Send from a socket, or POST from your API.</span></li>
+          </ol>
+        </div>
+        <div class="code" data-tabs>
+          <div class="code-bar" role="tablist">
+            <button role="tab" aria-selected="true" data-tab="browser">browser.js</button>
+            <button role="tab" aria-selected="false" data-tab="http">http</button>
+            <button role="tab" aria-selected="false" data-tab="docker">terminal</button>
+          </div>
+<pre data-panel="browser"><span class="c">// &lt;script src="http://bastionHost:10008/socket.io/socket.io.js"&gt;</span>
+<span class="k">const</span> socket = io.<span class="f">connect</span>(<span class="s">'http://bastionHost:10008/bastion/notification'</span>)
+
+socket.<span class="f">on</span>(<span class="s">'connect'</span>, () =&gt; {
+  socket.<span class="f">emit</span>(<span class="s">'bastion-join'</span>, { customId: userId }, <span class="s">'orders'</span>)
+})
+
+socket.<span class="f">on</span>(<span class="s">'bastion-notification'</span>, (notification) =&gt; {
+  <span class="f">render</span>(notification)
+})
+
+<span class="c">// everyone on #orders except me</span>
+socket.<span class="f">emit</span>(<span class="s">'bastion-broadcast-notification'</span>,
+  { notification: { id: 42, status: <span class="s">'shipped'</span> } }, <span class="s">'orders'</span>)</pre>
+<pre data-panel="http" hidden><span class="k">POST</span> http://bastionHost:10007/bastion/notification
+Content-Type: application/json
+
+{
+  <span class="s">"meta"</span>: { <span class="s">"channels"</span>: [<span class="s">"orders"</span>, <span class="s">"index"</span>] },
+  <span class="s">"notification"</span>: { <span class="s">"id"</span>: 42, <span class="s">"status"</span>: <span class="s">"shipped"</span> }
+}
+
+<span class="c"># 200 OK  →  every socket on #orders and #index
+#           receives bastion-notification</span></pre>
+<pre data-panel="docker" hidden><span class="c"># API on :10007, Socket.IO on :10008, 4 workers</span>
+<span class="f">$</span> docker-compose up
+
+<span class="c"># or by hand (Node 14+)</span>
+<span class="f">$</span> npm install
+<span class="f">$</span> PORT=10007 IOPORT=10008 CLUSTER=4 npm start
+
+<span class="c"># is it up?</span>
+<span class="f">$</span> curl http://localhost:10007/bastion/healthcheck/ping</pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="scale" class="block">
+      <div class="wrap split">
+        <div>
+          <div class="head" style="margin-bottom:28px">
+            <p class="kicker">03 · Scale out</p>
+            <h2>More cores, more nodes, same channels.</h2>
+            <p>Set <code>CLUSTER</code> and Bastion forks one worker per core, restarting any that die. Run several nodes and point <code>SOCKET_BROKER</code> at a shared broker: every message is synced across nodes, so a socket on node A still hears a POST that hit node B.</p>
+          </div>
+          <p class="muted">Each node connects to the broker as a client and joins two sync channels, one for emits and one for broadcasts. A message enters once, fans out to every node, and each node delivers to its own sockets.</p>
+        </div>
+        <div class="arch">
+          <svg viewBox="0 0 480 330" role="img" aria-label="Two Bastion nodes synced through a broker">
+            <rect class="box hot" x="170" y="14" width="140" height="48" rx="10"/>
+            <text class="t" x="240" y="36" text-anchor="middle">Broker</text>
+            <text x="240" y="52" text-anchor="middle" style="font-size:10px">SOCKET_BROKER</text>
+            <path class="ln g" d="M210 62 C210 100 110 90 110 128"/>
+            <path class="ln g" d="M270 62 C270 100 370 90 370 128"/>
+            <rect class="box" x="20" y="128" width="180" height="104" rx="12"/>
+            <text class="t" x="110" y="152" text-anchor="middle">Node A</text>
+            <rect class="box" x="36" y="166" width="68" height="24" rx="6"/><text x="70" y="182" text-anchor="middle" style="font-size:10px">worker 1</text>
+            <rect class="box" x="116" y="166" width="68" height="24" rx="6"/><text x="150" y="182" text-anchor="middle" style="font-size:10px">worker 2</text>
+            <text x="110" y="214" text-anchor="middle" style="font-size:10px">CLUSTER=2</text>
+            <rect class="box" x="280" y="128" width="180" height="104" rx="12"/>
+            <text class="t" x="370" y="152" text-anchor="middle">Node B</text>
+            <rect class="box" x="296" y="166" width="68" height="24" rx="6"/><text x="330" y="182" text-anchor="middle" style="font-size:10px">worker 1</text>
+            <rect class="box" x="376" y="166" width="68" height="24" rx="6"/><text x="410" y="182" text-anchor="middle" style="font-size:10px">worker 2</text>
+            <text x="370" y="214" text-anchor="middle" style="font-size:10px">CLUSTER=2</text>
+            <path class="ln" d="M70 232 L50 276 M110 232 L110 276 M150 232 L170 276"/>
+            <path class="ln" d="M330 232 L310 276 M370 232 L370 276 M410 232 L430 276"/>
+            <circle cx="50" cy="288" r="10" class="box"/><circle cx="110" cy="288" r="10" class="box"/><circle cx="170" cy="288" r="10" class="box"/>
+            <circle cx="310" cy="288" r="10" class="box"/><circle cx="370" cy="288" r="10" class="box"/><circle cx="430" cy="288" r="10" class="box"/>
+            <text x="240" y="322" text-anchor="middle">sockets on #orders, connected to either node</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section id="api" class="block">
+      <div class="wrap">
+        <div class="head">
+          <p class="kicker">04 · API at a glance</p>
+          <h2>Four events, four endpoints.</h2>
+          <p>Socket.IO namespace <code>/bastion/notification</code> on the IO port; HTTP routes on the API port, with Swagger docs built in.</p>
+        </div>
+        <div class="grid2">
+          <div class="card">
+            <table class="table">
+              <thead><tr><th>Socket event</th><th>What it does</th></tr></thead>
+              <tbody>
+                <tr><td><code>bastion-join</code></td><td>Join channels with a custom id</td></tr>
+                <tr><td><code>bastion-emit-notification</code></td><td>Send to the channel, sender included</td></tr>
+                <tr><td><code>bastion-broadcast-notification</code></td><td>Send to the channel, sender excluded</td></tr>
+                <tr><td><code>bastion-notification</code></td><td>What every listener receives</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card">
+            <table class="table">
+              <thead><tr><th>HTTP route</th><th>What it does</th></tr></thead>
+              <tbody>
+                <tr><td><span class="verb post">POST</span><code>/bastion/notification</code></td><td>Push to a list of channels</td></tr>
+                <tr><td><span class="verb get">GET</span><code>/bastion/inspect/channels</code></td><td>Channels and socket counts</td></tr>
+                <tr><td><span class="verb get">GET</span><code>/bastion/inspect/channels/{name}</code></td><td>Sockets in one channel</td></tr>
+                <tr><td><span class="verb get">GET</span><code>/bastion/healthcheck/ping</code></td><td>Liveness check</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="wrap">
+        <img src="assets/logo.svg" alt="">
+        <h2>Wire it into your app.</h2>
+        <p>Every event, payload, environment variable and response, in one page.</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="docs.html">Read the docs</a>
+          <a class="btn btn-ghost" href="#start">Quick start</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap">
+      <span>Bastion · real-time notification API</span>
+      <span>Node.js · Socket.IO · Hapi</span>
+    </div>
+  </footer>
+  <script src="assets/site.js"></script>
+</body>
+</html>
