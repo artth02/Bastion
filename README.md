@@ -18,8 +18,8 @@ Run the following command:
 
 ### Requirements
 
-* node.js (tested with 14.2.0)
-* npm (tested with 6.14.4)
+* node.js (tested with 26.12.0)
+* npm (tested with 11.20.0)
 
 ### Running
 
