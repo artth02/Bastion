@@ -1,10 +1,10 @@
-const faker = require('faker')
+const { faker } = require('@faker-js/faker')
 
 class Order {
-  constructor(data = {}) {
-    const price = faker.random.number({ min: 100, max: 300 })
-    const quantity = faker.random.number({ min: 1, max: 100 })
-    const status = faker.random.arrayElement([
+  constructor (data = {}) {
+    const price = faker.number.int({ min: 100, max: 300 })
+    const quantity = faker.number.int({ min: 1, max: 100 })
+    const status = faker.helpers.arrayElement([
       {
         id: 1,
         description: 'executed'
@@ -28,11 +28,11 @@ class Order {
       description: data.description,
       requiredPrice: price,
       requiredQuantity: quantity,
-      executedPrice: faker.random.arrayElement([price, price - 1, price + 1]),
-      executedQuantity: faker.random.arrayElement([quantity, quantity - 1])
+      executedPrice: faker.helpers.arrayElement([price, price - 1, price + 1]),
+      executedQuantity: faker.helpers.arrayElement([quantity, quantity - 1])
     }
-    this.type = faker.random.arrayElement(['buy', 'sell'])
-    this.category = faker.random.arrayElement(['Limitada', 'Stop', 'Start', 'Stop Móvel', 'Estratégica', 'Termo'])
+    this.type = faker.helpers.arrayElement(['buy', 'sell'])
+    this.category = faker.helpers.arrayElement(['Limitada', 'Stop', 'Start', 'Stop Móvel', 'Estratégica', 'Termo'])
     this.status = status
   }
 }

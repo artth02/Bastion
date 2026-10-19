@@ -1,16 +1,17 @@
 const Hapi = require('@hapi/hapi')
-const cluster = require('cluster')
+const Joi = require('joi')
+const cluster = require('node:cluster')
+const { styleText } = require('node:util')
 const env = require('config')
-const chalk = require('chalk')
 const sns = require('./libs/infra/aws/sns')
 
 process.on('unhandledRejection', (err) => {
-  console.error(chalk.red('error'), 'Server fault: ' + err.message + ' | ' + err.stack)
+  console.error(styleText('red', 'error'), 'Server fault: ' + err.message + ' | ' + err.stack)
   process.exit(1)
 })
 
-if (cluster.isMaster && env.api.cluster) {
-  for (var i = 0; i < env.api.cluster; i += 1) {
+if (cluster.isPrimary && env.api.cluster) {
+  for (let i = 0; i < env.api.cluster; i += 1) {
     cluster.fork()
   }
 
@@ -27,34 +28,38 @@ if (cluster.isMaster && env.api.cluster) {
       }
     })
 
+    server.validator(Joi)
     require('./libs/api/middlewares/preResponse.js')(server)
     require('./libs/api/routes/routes.js')(server)
     const swaggerConfig = require('./libs/api/swagger/configuration.js')
 
     await server.register([
-      { plugin: require('inert') },
-      { plugin: require('vision') },
-      swaggerConfig.swaggered,
-      swaggerConfig.swaggeredUi
+      { plugin: require('@hapi/inert') },
+      { plugin: require('@hapi/vision') },
+      swaggerConfig.swagger
     ])
 
     await server.start()
 
-    console.info(chalk.green('bastion is running'), server.info.protocol + ' server at: ' + chalk.bold(server.info.uri))
+    console.info(styleText('green', 'bastion is running'), server.info.protocol + ' server at: ' + styleText('bold', server.info.uri))
     if (env.aws.sns.enabled) {
       sns.subscribe(server, env)
     }
 
     const socketServerInfo = server.info.protocol + '://' + server.info.host + ':' + env.socketIO.port
-    global.socketIO = require('socket.io')(env.socketIO.port)
-    const io = require('socket.io-client')
+    global.socketIO = require('socket.io')(env.socketIO.port, {
+      // socket.io v2 allowed any origin and EIO3 clients; keep both so existing consumers still connect
+      cors: { origin: true, credentials: true },
+      allowEIO3: true
+    })
+    const { io } = require('socket.io-client')
     console.info('env.socketIO.broker.url', env.socketIO.broker.url)
-    global.socketClient = io.connect(env.socketIO.broker.url || `${socketServerInfo}/bastion/notification`)
+    global.socketClient = io(env.socketIO.broker.url || `${socketServerInfo}/bastion/notification`)
 
     require('./libs/core/notification/notificationService.js').init()
     require('./libs/core/broker/broker.service').init()
     require('./libs/infra/websocket/index').init()
 
-    console.info(chalk.green('bastion is running'), 'socket-IO server at: ' + chalk.bold(socketServerInfo))
+    console.info(styleText('green', 'bastion is running'), 'socket-IO server at: ' + styleText('bold', socketServerInfo))
   })()
 }

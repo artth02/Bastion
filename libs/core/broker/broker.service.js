@@ -1,4 +1,4 @@
-const uuid = require('uuid')
+const { randomUUID } = require('node:crypto')
 const eventNames = require('../common/eventNames.json')
 const namespaces = require('../common/namespaces.json')
 
@@ -9,8 +9,8 @@ function init () {
   console.info('broker initialized')
   socketClient.on('connect', (result) => {
     console.info('connected to broker', result)
-    socketClient.emit(eventNames.socketIO.join, { customId: uuid.v4() }, eventNames.socketIO.brokerSyncNotification)
-    socketClient.emit(eventNames.socketIO.join, { customId: uuid.v4() }, eventNames.socketIO.brokerBroadcastSyncNotification)
+    socketClient.emit(eventNames.socketIO.join, { customId: randomUUID() }, eventNames.socketIO.brokerSyncNotification)
+    socketClient.emit(eventNames.socketIO.join, { customId: randomUUID() }, eventNames.socketIO.brokerBroadcastSyncNotification)
   })
 }
 

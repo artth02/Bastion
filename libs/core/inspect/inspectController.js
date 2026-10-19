@@ -1,8 +1,8 @@
-var notificationService = require('./../notification/notificationService.js')
+const notificationService = require('./../notification/notificationService.js')
 
 module.exports = {
-  inspect: inspect,
-  inspectChannel: inspectChannel
+  inspect,
+  inspectChannel
 }
 
 function inspect (request, reply) {

@@ -2,12 +2,12 @@ const Login = require('./login')
 const Symbol = require('./Symbol')
 const Order = require('./Order')
 const Book = require('./Book')
-const faker = require('faker')
+const { faker } = require('@faker-js/faker')
 const Wallet = require('./Wallet')
-const pako = require('pako')
+const zlib = require('node:zlib')
 
 let clients = []
-async function start(socket) {
+async function start (socket) {
   console.log('start')
   await timeout(500)
   for (let i = 0; i < socket.symbols.length; i++) {
@@ -15,8 +15,8 @@ async function start(socket) {
 
     const item = socket.symbols[i]
     console.log('send', item)
-    const response = Buffer.from(JSON.stringify({ type: "subscribeSymbol", data: Symbol.getMarketPrices(item) }))
-    const binaryString = pako.deflate(response, { to: 'string' })
+    const response = Buffer.from(JSON.stringify({ type: 'subscribeSymbol', data: Symbol.getMarketPrices(item) }))
+    const binaryString = zlib.deflateSync(response).toString('latin1')
 
     socket.send(binaryString)
   }
@@ -30,13 +30,13 @@ async function start(socket) {
   }
 }
 
-async function timeout(ms = 1000) {
+async function timeout (ms = 1000) {
   await new Promise((resolve, reject) => {
     setTimeout(() => { resolve() }, ms)
   })
 }
 
-function mocks(socket, data) {
+function mocks (socket, data) {
   try {
     data = JSON.parse(data)
     console.log('mock data', data)
@@ -80,7 +80,7 @@ function mocks(socket, data) {
     }
     case 'books': {
       const booksList = []
-      const lastPrice = parseFloat(faker.finance.amount(100, 1000, 2))
+      const lastPrice = parseFloat(faker.finance.amount({ min: 100, max: 1000, dec: 2 }))
       let item = symb.find(x => x.name === data.symbol)
       if (!item) {
         item = symb[0]

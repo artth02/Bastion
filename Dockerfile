@@ -1,4 +1,4 @@
-FROM node:12
+FROM node:26
 
 EXPOSE 10007 10008
 

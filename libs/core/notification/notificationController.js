@@ -1,7 +1,7 @@
 const notificationService = require('./notificationService.js')
 
 module.exports = {
-  sendNotification: sendNotification
+  sendNotification
 }
 
 function sendNotification (req, reply) {

@@ -1,25 +1,20 @@
 const env = require('config')
-const AWS = require('aws-sdk')
+const { SNSClient, SubscribeCommand } = require('@aws-sdk/client-sns')
 
-function subscribe (server) {
-  const sns = new AWS.SNS({
-    region: env.aws.region,
-    params: {
+async function subscribe (server) {
+  const sns = new SNSClient({ region: env.aws.region })
+
+  try {
+    const data = await sns.send(new SubscribeCommand({
       TopicArn: env.aws.sns.TopicArn,
       Protocol: env.aws.sns.Protocol,
       Endpoint: `${server.info.uri}/bastion/notification`
-    }
-
-  })
-
-  sns.subscribe((err, data) => {
-    if (err) {
-      console.error('SNS |', err)
-    } else {
-      console.info('SNS | subscribed to sns: ', env.aws.sns.TopicArn)
-      console.info('SNS | data', data)
-    }
-  })
+    }))
+    console.info('SNS | subscribed to sns: ', env.aws.sns.TopicArn)
+    console.info('SNS | data', data)
+  } catch (err) {
+    console.error('SNS |', err)
+  }
 }
 
 module.exports = {

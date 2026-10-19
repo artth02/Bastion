@@ -2,13 +2,12 @@ const packagejson = require('./../../../package.json')
 const basePath = '/bastion'
 
 module.exports = {
-  swaggered: {
-    plugin: require('hapi-swaggered'),
-    requiredtags: ['api'],
+  swagger: {
+    plugin: require('hapi-swagger'),
     options: {
-      cors: false,
-      endpoint: '/documentation',
-      responseValidation: false,
+      documentationPath: `${basePath}/documentation`,
+      jsonPath: '/documentation',
+      grouping: 'tags',
       info: {
         title: `${packagejson.name} manifest`,
         description: packagejson.description,
@@ -17,26 +16,10 @@ module.exports = {
           url: 'https://github.com/artth02/bastion'
         }
       },
-      tagging: {
-        mode: 'tags'
-      }
+      securityDefinitions: {
+        Authorization: { type: 'apiKey', name: 'Authorization', in: 'header' }
+      },
+      validatorUrl: null
     }
-  },
-  swaggeredUi: {
-    plugin: require('hapi-swaggered-ui'),
-    options: {
-      authorization: {
-        field: 'Authorization',
-        scope: 'header',
-        defaultValue: 'demoKey',
-        placeholder: 'Authorization token here'
-      },
-      swaggerOptions: {
-        validatorUrl: null
-      },
-      title: 'Bastion',
-      path: `${basePath}/documentation`
-    },
-    supportedMethod: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
   }
 }

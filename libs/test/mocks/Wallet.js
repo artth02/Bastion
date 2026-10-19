@@ -1,5 +1,5 @@
 const Symbols = require('./Symbol')
-const faker = require('faker')
+const { faker } = require('@faker-js/faker')
 
 class Wallet {
   constructor () {
@@ -8,15 +8,15 @@ class Wallet {
 
     for (let i = 0; i < symbolsList.length; i++) {
       const symbol = symbolsList[i]
-      const lastPrice = parseFloat(faker.finance.amount(100, 1000, 2))
-      const quantity = faker.random.number(1000)
+      const lastPrice = parseFloat(faker.finance.amount({ min: 100, max: 1000, dec: 2 }))
+      const quantity = faker.number.int(1000)
 
       this.symbols.push({
         ...symbol,
         lastPrice,
         quantity,
         value: quantity * lastPrice,
-        oscilationRate: faker.random.number(15)
+        oscilationRate: faker.number.int(15)
       })
     }
   }

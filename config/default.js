@@ -1,14 +1,11 @@
-const dotenv = require('dotenv')
-const path = require('path')
+const path = require('node:path')
 
 // Set default node environment to development
 process.env.NODE_ENV = process.env.NODE_ENV || 'development'
 const envPath = path.join(__dirname, './../.env')
 
 try {
-  dotenv.config({
-    path: envPath
-  })
+  process.loadEnvFile(envPath)
 } catch (err) {
   console.info(envPath + ' not found, load by environment variables')
 }

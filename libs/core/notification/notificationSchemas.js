@@ -1,6 +1,6 @@
-var Joi = require('@hapi/joi')
+const Joi = require('joi')
 
-var sendNotification = {
+const sendNotification = {
   body: Joi.object().keys({
     meta: Joi.object().keys({
       channels: Joi.array().required().min(1)
@@ -10,5 +10,5 @@ var sendNotification = {
 }
 
 module.exports = {
-  sendNotification: sendNotification
+  sendNotification
 }

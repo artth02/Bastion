@@ -1,13 +1,13 @@
-const faker = require('faker')
+const { faker } = require('@faker-js/faker')
 
 function getMarketPrices (symbolName) {
-  const lastPrice = faker.finance.amount(300, 500, 2)
+  const lastPrice = faker.finance.amount({ min: 300, max: 500, dec: 2 })
   const operations = []
   for (let index = 0; index < 5; index++) {
     operations.push({
-      buyPrice: faker.finance.amount(300, 500, 2),
+      buyPrice: faker.finance.amount({ min: 300, max: 500, dec: 2 }),
       buyQuantity: 5,
-      sellPrice: faker.finance.amount(300, 800, 2),
+      sellPrice: faker.finance.amount({ min: 300, max: 800, dec: 2 }),
       sellQuantity: 5
     })
   }
@@ -15,7 +15,7 @@ function getMarketPrices (symbolName) {
   return {
     symbol: {
       name: symbolName,
-      lastPrice: lastPrice,
+      lastPrice,
       quantity: 10,
       oscilationRate: 6
     },

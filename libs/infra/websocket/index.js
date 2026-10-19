@@ -1,16 +1,16 @@
 const WebSocket = require('ws')
 const config = require('config')
-const chalk = require('chalk')
+const { styleText } = require('node:util')
 const mocks = require('./../../test/mocks/index')
-const pako = require('pako')
-const uuid = require('uuid')
+const zlib = require('node:zlib')
+const { randomUUID } = require('node:crypto')
 
 /**
  * Method: Initialize websocket server
  */
-function init() {
+function init () {
   if (!config.websocket.port) {
-    console.error(`${chalk.red('websocket not initialized - missing websocket server port in confi file')}`)
+    console.error(`${styleText('red', 'websocket not initialized - missing websocket server port in confi file')}`)
     return
   }
 
@@ -36,21 +36,23 @@ function init() {
       // should not be compressed.
     }
   })
-  console.info(`${chalk.green('bastion is running')} websocket server running at ${config.websocket.port}`)
+  console.info(`${styleText('green', 'bastion is running')} websocket server running at ${config.websocket.port}`)
   register(wsServer)
 }
 
-function register(wss) {
+function register (wss) {
   wss.on('connection', (ws, request, client) => {
-    ws.id = uuid.v4()
+    ws.id = randomUUID()
     console.log('ws connection')
 
-    ws.on('message', (data) => {
+    ws.on('message', (raw, isBinary) => {
+      // ws v8 hands text frames over as Buffers; keep the v7 string payload
+      const data = isBinary ? raw : raw.toString()
       console.log('data')
       const mockData = mocks.mocks(ws, data)
       console.log('mockdata', mockData)
       const response = Buffer.from(JSON.stringify(mockData || data))
-      const binaryString = pako.deflate(response, { to: 'string' })
+      const binaryString = zlib.deflateSync(response).toString('latin1')
 
       if (mockData) {
         ws.send(binaryString)
@@ -59,7 +61,7 @@ function register(wss) {
         console.log('mockData', mockData)
       } else {
         // Calls notification service here to send messagens through socket
-        wss.clients.forEach(function each(client) {
+        wss.clients.forEach(function each (client) {
           if (client.readyState === WebSocket.OPEN) {
             client.send(binaryString)
           }

@@ -1,16 +1,16 @@
-var Joi = require('@hapi/joi')
+const Joi = require('joi')
 
-var inspect = {
+const inspect = {
   query: Joi.optional().default({})
 }
 
-var inspectChannel = {
+const inspectChannel = {
   params: Joi.object({
     channelName: Joi.string().alphanum().required().example('index')
   })
 }
 
 module.exports = {
-  inspect: inspect,
-  inspectChannel: inspectChannel
+  inspect,
+  inspectChannel
 }

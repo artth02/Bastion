@@ -105,7 +105,7 @@
             <p>One container, two ports: the HTTP API on <code>10007</code> and Socket.IO on <code>10008</code>.</p>
           </div>
           <ol class="steps">
-            <li><span><strong>Start it</strong><code>docker-compose up</code>, or <code>npm install && npm start</code> on Node 14.</span></li>
+            <li><span><strong>Start it</strong><code>docker-compose up</code>, or <code>npm install && npm start</code> on Node 26.</span></li>
             <li><span><strong>Connect</strong>Load the Socket.IO client from Bastion and open the <code>/bastion/notification</code> namespace.</span></li>
             <li><span><strong>Join</strong>Emit <code>bastion-join</code> with your custom id and the channels to listen on.</span></li>
             <li><span><strong>Listen</strong>Handle <code>bastion-notification</code>. Send from a socket, or POST from your API.</span></li>
@@ -144,7 +144,7 @@ Content-Type: application/json
 <pre data-panel="docker" hidden><span class="c"># API on :10007, Socket.IO on :10008, 4 workers</span>
 <span class="f">$</span> docker-compose up
 
-<span class="c"># or by hand (Node 14+)</span>
+<span class="c"># or by hand (Node 26+)</span>
 <span class="f">$</span> npm install
 <span class="f">$</span> PORT=10007 IOPORT=10008 CLUSTER=4 npm start
 

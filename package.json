@@ -1,16 +1,13 @@
 {
   "name": "bastion-api",
-  "version": "2.1.1",
+  "version": "3.0.1",
   "description": "A Real Time Notification API",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
     "test": "npm run lint && nyc npm run test-mocha",
-    "test-mocha": "cross-env NODE_ENV=test mocha --harmony --exit ./libs/**/*Spec.js",
-    "test-mocha-watch": "cross-env NODE_ENV=test mocha --watch --harmony ./libs/**/*Spec.js",
-    "precommit": "npm run git-hook",
-    "prepush": "npm run git-hook",
-    "git-hook": "npm run lint -s && npm run test -s",
+    "test-mocha": "cross-env NODE_ENV=test mocha --exit \"./libs/**/*Spec.js\"",
+    "test-mocha-watch": "cross-env NODE_ENV=test mocha --watch \"./libs/**/*Spec.js\"",
     "lint": "standard --verbose | snazzy",
     "lint:fix": "standard --fix",
     "lintdiff": "git diff --name-only --cached --relative | grep '\\.js$' | xargs standard | snazzy",
@@ -25,35 +22,29 @@
     "api"
   ],
   "engines": {
-    "node": ">=14.2.0",
-    "npm": ">=6.14.4"
+    "node": ">=26",
+    "npm": ">=11"
   },
   "author": "Arthur R. Fonseca",
   "license": "",
   "dependencies": {
-    "@hapi/hapi": "^18.4.1",
-    "@hapi/joi": "^17.1.1",
-    "aws-sdk": "^2.670.0",
-    "chalk": "^4.0.0",
-    "config": "^3.3.1",
-    "cross-env": "^7.0.2",
-    "dotenv": "^8.2.0",
-    "faker": "^4.1.0",
-    "flatted": "^2.0.2",
-    "hapi-swaggered": "^3.0.2",
-    "hapi-swaggered-ui": "^3.0.2",
-    "inert": "^5.1.3",
-    "moment": "^2.26.0",
-    "newrelic": "^6.7.1",
-    "pako": "^1.0.11",
-    "socket.io": "^2.3.0",
-    "socket.io-client": "^2.3.0",
-    "uuid": "^8.0.0",
-    "vision": "^5.4.4",
-    "ws": "^7.3.0"
+    "@aws-sdk/client-sns": "^3.1152.0",
+    "@faker-js/faker": "^10.6.0",
+    "@hapi/hapi": "^21.4.10",
+    "@hapi/inert": "^7.1.2",
+    "@hapi/vision": "^7.0.3",
+    "config": "^5.0.1",
+    "hapi-swagger": "^17.3.2",
+    "joi": "^17.13.8",
+    "socket.io": "^4.8.4",
+    "socket.io-client": "^4.8.4",
+    "ws": "^8.22.0"
   },
   "standard": {
-    "parser": "babel-eslint",
+    "ignore": [
+      "libs/test/package/",
+      "site/"
+    ],
     "globals": [
       "describe",
       "it",
@@ -66,27 +57,18 @@
   },
   "nyc": {
     "include": [
-      "src/**/*.js"
-    ],
-    "require": [
-      "babel-register"
+      "libs/**/*.js"
     ],
     "exclude": [
-      "packages/**/*"
+      "libs/test/**"
     ],
-    "sourceMap": true,
-    "instrument": true,
     "all": false
   },
   "devDependencies": {
-    "babel-eslint": "^10.1.0",
-    "babel-plugin-istanbul": "^6.0.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-register": "^6.26.0",
-    "husky": "^4.2.5",
-    "mocha": "^7.1.2",
-    "nyc": "^15.0.1",
-    "snazzy": "^8.0.0",
-    "standard": "^14.3.4"
+    "cross-env": "^10.1.0",
+    "mocha": "^12.0.3",
+    "nyc": "^18.0.0",
+    "snazzy": "^9.0.0",
+    "standard": "^17.1.2"
   }
 }

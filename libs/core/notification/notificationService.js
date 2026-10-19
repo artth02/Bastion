@@ -92,13 +92,14 @@ function broadcast (socket) {
 }
 
 function inspect () {
-  const notificationChannels = socketIO.of(namespaces.notification).adapter.rooms
+  const { rooms, sids } = socketIO.of(namespaces.notification).adapter
   const result = []
-  for (const prop in notificationChannels) {
-    if (prop.toString().indexOf('/') === -1) {
+  for (const [channelName, socketIds] of rooms) {
+    // every socket auto-joins a private room named by its own id; skip those
+    if (!sids.has(channelName)) {
       result.push({
-        channelName: prop,
-        length: notificationChannels[prop].length
+        channelName,
+        length: socketIds.size
       })
     }
   }
@@ -115,13 +116,15 @@ function disconnect (socket) {
 }
 
 function inspectChannel (channelName) {
-  const socketsInChannel = socketIO.of(namespaces.notification).in(channelName).sockets
+  const namespace = socketIO.of(namespaces.notification)
+  const socketIds = namespace.adapter.rooms.get(channelName) || new Set()
   const result = []
-  for (const prop in socketsInChannel) {
-    if (socketsInChannel[prop].rooms[channelName]) {
+  for (const socketId of socketIds) {
+    const socket = namespace.sockets.get(socketId)
+    if (socket) {
       result.push({
-        socketId: socketsInChannel[prop].id,
-        customId: socketsInChannel[prop].customId
+        socketId: socket.id,
+        customId: socket.customId
       })
     }
   }
@@ -138,10 +141,10 @@ function brokerEmit (sender) {
 }
 
 module.exports = {
-  init: init,
+  init,
   broker: {
     emit: brokerEmit
   },
-  inspect: inspect,
-  inspectChannel: inspectChannel
+  inspect,
+  inspectChannel
 }

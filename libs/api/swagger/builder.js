@@ -2,12 +2,12 @@ const badRequestModel = require('./models/badRequest.js')
 
 exports.document = () => {
   return {
-    ok: ok,
-    noContent: noContent,
-    badRequest: badRequest,
-    notFound: notFound,
-    internalServerError: internalServerError,
-    done: done,
+    ok,
+    noContent,
+    badRequest,
+    notFound,
+    internalServerError,
+    done,
     swaggerOptions: {}
   }
 }
